@@ -137,10 +137,16 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     return out;
   }
 
-  /** A live booking the caller may act on: the ref must exist AND belong to the caller's number. */
-  function ownedBooking(ref: string, phone: string): BookingRow | undefined {
+  /**
+   * A booking the caller may act on: the ref must exist AND belong to the number on the line
+   * (`call.customer.number`, as Vapi saw it). A number the caller says is never proof of
+   * ownership; a call without caller ID can book and leave messages, not move or cancel.
+   */
+  function ownedBooking(ref: string, call: VapiCall): BookingRow | undefined {
+    const line = call.customer?.number ? normalizePhone(call.customer.number) : undefined;
+    if (!line) return undefined;
     const b = db.prepare('select * from bookings where ref = ?').get(ref.toUpperCase()) as BookingRow | undefined;
-    return b && b.phone === phone ? b : undefined;
+    return b && b.phone === line ? b : undefined;
   }
 
   function isUniqueViolation(err: unknown): boolean {
@@ -199,7 +205,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   function reschedule(call: VapiCall, args: Record<string, unknown>): Outcome {
     const ref = str(args, 'bookingRef')!;
     const newSlot = str(args, 'newSlot')!;
-    const b = ownedBooking(ref, callerPhone(call, args));
+    const b = ownedBooking(ref, call);
     if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.slot === newSlot) return { result: bookingResult(b, 'unchanged') };
     const check = checkSlot(clinic, newSlot, now());
@@ -216,7 +222,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
 
   function cancel(call: VapiCall, args: Record<string, unknown>): Outcome {
     const ref = str(args, 'bookingRef')!;
-    const b = ownedBooking(ref, callerPhone(call, args));
+    const b = ownedBooking(ref, call);
     if (!b) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.status === 'cancelled') return { result: { status: 'already_cancelled', bookingRef: b.ref } };
     if (b.status === 'expired') return { result: { status: 'already_released', bookingRef: b.ref } };
@@ -261,7 +267,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
 
   async function sendDepositLink(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
     const ref = str(args, 'bookingRef')!;
-    const b = ownedBooking(ref, callerPhone(call, args));
+    const b = ownedBooking(ref, call);
     if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingRef: b.ref } };
 
@@ -304,7 +310,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
 
   async function checkDeposit(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
     const ref = str(args, 'bookingRef')!;
-    const b = ownedBooking(ref, callerPhone(call, args));
+    const b = ownedBooking(ref, call);
     if (!b) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.status === 'confirmed') return { result: bookingResult(b, 'paid') };
     if (b.status !== 'held') return { result: { status: b.status === 'expired' ? 'hold_expired' : 'cancelled', bookingRef: b.ref } };
