@@ -17,7 +17,8 @@ create table if not exists tool_calls (
 create table if not exists bookings (
   ref             text primary key,     -- short code a caller can read back, e.g. BK-7Q2M9X
   vapi_call_id    text not null,
-  phone           text not null,
+  phone           text not null,        -- owner: caller ID on the line that booked
+  callback_phone  text not null,        -- the number the caller asked to be called back on
   name            text not null,
   slot            text not null,        -- clinic-local YYYY-MM-DDTHH:MM
   status          text not null,        -- held | confirmed | cancelled | expired
@@ -39,7 +40,7 @@ create unique index if not exists one_live_booking_per_call
 create table if not exists deposits (
   booking_ref     text primary key references bookings (ref),
   idempotency_key text not null unique,
-  status          text not null,        -- creating | open | paid | failed | unknown
+  status          text not null,        -- creating | open | paid | expired | failed | unknown
   session_id      text unique,
   url             text,
   error           text,

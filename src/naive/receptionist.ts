@@ -6,9 +6,11 @@ import type { Receptionist } from '../receptionist.js';
 import { toolArguments, type ToolCall, type ToolResult, type VapiCall } from '../vapi.js';
 
 /**
- * The receptionist as it is usually first written, kept for contrast: every tool call runs,
- * a booking is a read-then-insert, a deposit link is a new Checkout Session each time, and a
- * hold never runs out. Each of these is a test that fails on this side (test/naive.test.ts).
+ * The receptionist as it is usually first written, kept for contrast: every tool call runs, a
+ * booking is a read-then-insert, a deposit link is a new Checkout Session each time, and a hold
+ * never runs out. test/naive.test.ts shows the duplicates this produces: two sessions for one
+ * deposit, and a cancelled slot booked again by a late redelivery. (In one Node process the
+ * read-then-insert happens to be safe, because nothing awaits between the read and the insert.)
  */
 export function createNaiveReceptionist(opts: ReceptionistOptions): Receptionist {
   const db = new Database(opts.dbPath);
@@ -42,7 +44,7 @@ export function createNaiveReceptionist(opts: ReceptionistOptions): Receptionist
         return { status: 'cancelled', bookingRef: args.bookingRef };
       case 'send_deposit_link': {
         const s = await opts.stripe.createDepositSession(
-          { bookingRef: args.bookingRef, amountCents: clinic.depositCents, currency: clinic.currency },
+          { bookingRef: args.bookingRef, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
           randomUUID(), // a fresh key per request: the same as sending none
         );
         db.prepare('insert into deposits values (?, ?, ?)').run(args.bookingRef, s.id, s.url);

@@ -1,7 +1,8 @@
 /**
- * The two Stripe calls the deposit needs, form-encoded as Stripe's API expects
- * (docs/sources.md). A Checkout Session create carries an `Idempotency-Key`: Stripe stores the
- * first response for a key and returns it again for a retry with the same key and parameters.
+ * The Stripe calls the deposit needs, form-encoded as Stripe's API expects (docs/sources.md).
+ * A Checkout Session create carries an `Idempotency-Key`: Stripe stores the first response for a
+ * key and returns it again for a retry with the same key and parameters. A session lives 24 hours
+ * by default, longer than the booking's hold, so releasing a hold expires its session first.
  */
 export interface CheckoutSession {
   id: string;
@@ -10,7 +11,10 @@ export interface CheckoutSession {
   status: 'open' | 'complete' | 'expired';
 }
 
-/** `rejected`: Stripe answered with an error, nothing was created. `unknown`: no answer, it may have been. */
+/**
+ * `rejected`: Stripe answered with a 4xx that means the request did not execute.
+ * `unknown`: no answer, a 5xx, or a 409 (the same key still executing): it may have happened.
+ */
 export class StripeError extends Error {
   constructor(
     message: string,
@@ -21,24 +25,33 @@ export class StripeError extends Error {
 }
 
 export interface StripeClient {
-  createDepositSession(p: { bookingRef: string; amountCents: number; currency: string }, idempotencyKey: string): Promise<CheckoutSession>;
-  getSession(id: string): Promise<CheckoutSession>;
+  createDepositSession(
+    p: { bookingRef: string; amountCents: number; currency: string; successUrl: string },
+    idempotencyKey: string,
+  ): Promise<CheckoutSession>;
+  getSession(id: string, timeoutMs?: number): Promise<CheckoutSession>;
+  /** Stripe refuses to expire a session that is not open (for example one already paid). */
+  expireSession(id: string, timeoutMs?: number): Promise<CheckoutSession>;
 }
 
+/** Per request; a tool call makes at most one create, so it stays well inside Vapi's 20 s timeout. */
+export const STRIPE_TIMEOUT_MS = 8_000;
+
 export function createStripeClient(opts: { baseUrl: string; secretKey: string }): StripeClient {
-  async function call(path: string, init: RequestInit): Promise<CheckoutSession> {
+  async function call(path: string, init: RequestInit, timeoutMs = STRIPE_TIMEOUT_MS): Promise<CheckoutSession> {
     let res: Response;
+    let text: string;
     try {
       res = await fetch(`${opts.baseUrl}${path}`, {
         ...init,
         headers: { authorization: `Bearer ${opts.secretKey}`, ...(init.headers as Record<string, string>) },
-        signal: AbortSignal.timeout(8_000), // well inside Vapi's 20 s tool timeout
+        signal: AbortSignal.timeout(timeoutMs),
       });
+      text = await res.text();
     } catch (err) {
       throw new StripeError(`no answer from Stripe: ${err instanceof Error ? err.message : String(err)}`, 'unknown');
     }
-    const text = await res.text().catch(() => '');
-    if (res.status >= 500) throw new StripeError(`Stripe ${res.status}: ${text}`, 'unknown');
+    if (res.status >= 500 || res.status === 409) throw new StripeError(`Stripe ${res.status}: ${text}`, 'unknown');
     if (!res.ok) throw new StripeError(`Stripe ${res.status}: ${text}`, 'rejected');
     return JSON.parse(text) as CheckoutSession;
   }
@@ -50,6 +63,7 @@ export function createStripeClient(opts: { baseUrl: string; secretKey: string })
         headers: { 'content-type': 'application/x-www-form-urlencoded', 'idempotency-key': idempotencyKey },
         body: new URLSearchParams({
           mode: 'payment',
+          success_url: p.successUrl,
           'line_items[0][quantity]': '1',
           'line_items[0][price_data][currency]': p.currency,
           'line_items[0][price_data][unit_amount]': String(p.amountCents),
@@ -57,6 +71,8 @@ export function createStripeClient(opts: { baseUrl: string; secretKey: string })
           'metadata[booking_ref]': p.bookingRef,
         }).toString(),
       }),
-    getSession: (id) => call(`/v1/checkout/sessions/${encodeURIComponent(id)}`, { method: 'GET' }),
+    getSession: (id, timeoutMs) => call(`/v1/checkout/sessions/${encodeURIComponent(id)}`, { method: 'GET' }, timeoutMs),
+    expireSession: (id, timeoutMs) =>
+      call(`/v1/checkout/sessions/${encodeURIComponent(id)}/expire`, { method: 'POST' }, timeoutMs),
   };
 }

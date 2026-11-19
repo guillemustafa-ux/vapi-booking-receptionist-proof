@@ -16,8 +16,12 @@ export interface FakeStripe {
   failNext(mode: 'drop' | '500'): void;
   /** Stop answering (every request is dropped) until `answerAgain()`. */
   goDark(): void;
+  /** Accept requests and never answer them (a hanging Stripe) until `answerAgain()`. */
+  hang(): void;
   answerAgain(): void;
-  pay(sessionId: string): void;
+  /** The customer pays on the Checkout page. A session that is not open cannot be paid: returns false. */
+  pay(sessionId: string): boolean;
+  status(sessionId: string): Session['status'];
   sessionIds(): string[];
   close(): Promise<void>;
 }
@@ -26,7 +30,7 @@ interface Session {
   id: string;
   url: string;
   payment_status: 'paid' | 'unpaid';
-  status: 'open' | 'complete';
+  status: 'open' | 'complete' | 'expired';
   amount_total: number;
   metadata: Record<string, string>;
 }
@@ -38,10 +42,12 @@ export async function startFakeStripe(): Promise<FakeStripe> {
   let requests = 0;
   let nextFailure: 'drop' | '500' | undefined;
   let dark = false;
+  let hanging = false;
 
   const server = createServer(async (req, res) => {
     requests++;
     const raw = await readBody(req);
+    if (hanging) return; // never answered; the client's own timeout ends it
     if (dark) {
       res.destroy();
       return;
@@ -51,6 +57,18 @@ export async function startFakeStripe(): Promise<FakeStripe> {
       return;
     }
     const url = new URL(req.url ?? '/', 'http://stripe.local');
+
+    const expire = /^\/v1\/checkout\/sessions\/([^/]+)\/expire$/.exec(url.pathname);
+    if (req.method === 'POST' && expire) {
+      const s = sessions.get(decodeURIComponent(expire[1]!));
+      if (!s) res.writeHead(404).end(JSON.stringify({ error: { type: 'invalid_request_error', code: 'resource_missing' } }));
+      else if (s.status !== 'open') res.writeHead(400).end(JSON.stringify({ error: { type: 'invalid_request_error', message: 'Only open sessions can be expired.' } }));
+      else {
+        s.status = 'expired';
+        res.writeHead(200, { 'content-type': 'application/json' }).end(JSON.stringify(s));
+      }
+      return;
+    }
 
     if (req.method === 'GET' && url.pathname.startsWith('/v1/checkout/sessions/')) {
       const s = sessions.get(decodeURIComponent(url.pathname.slice('/v1/checkout/sessions/'.length)));
@@ -113,15 +131,30 @@ export async function startFakeStripe(): Promise<FakeStripe> {
     },
     failNext: (mode) => (nextFailure = mode),
     goDark: () => (dark = true),
-    answerAgain: () => (dark = false),
+    hang: () => (hanging = true),
+    answerAgain: () => {
+      dark = false;
+      hanging = false;
+    },
     pay(id) {
       const s = sessions.get(id);
       if (!s) throw new Error(`no session ${id}`);
+      if (s.status !== 'open') return false;
       s.payment_status = 'paid';
       s.status = 'complete';
+      return true;
+    },
+    status(id) {
+      const s = sessions.get(id);
+      if (!s) throw new Error(`no session ${id}`);
+      return s.status;
     },
     sessionIds: () => [...sessions.keys()],
-    close: () => new Promise<void>((r) => server.close(() => r())),
+    close: () =>
+      new Promise<void>((r) => {
+        server.close(() => r());
+        server.closeAllConnections(); // hanging requests too
+      }),
   };
 }
 

@@ -17,6 +17,8 @@ export interface Clinic {
   holdMinutes: number;
   depositCents: number;
   currency: string;
+  /** Where Stripe Checkout sends the caller after paying. */
+  depositSuccessUrl: string;
   faqs: Record<string, string>;
 }
 
@@ -31,6 +33,7 @@ export const DEFAULT_CLINIC: Clinic = {
   holdMinutes: 15,
   depositCents: 5000,
   currency: 'usd',
+  depositSuccessUrl: 'https://clinic.example/deposit-paid',
   faqs: {
     hours: 'We are open Monday to Friday, 9 am to 5 pm.',
     insurance: 'We accept Delta Dental, Cigna and Aetna PPO plans; bring your card to the visit.',
@@ -90,7 +93,7 @@ export function slotsOn(clinic: Clinic, date: string): string[] {
   return out;
 }
 
-/** Digits with a leading `+` kept; what the caller says and what Vapi sends compare equal. */
+/** Digits, with a leading `+` kept when present. Used to compare caller ID values, not to trust a spoken number. */
 export function normalizePhone(raw: string): string {
   const digits = raw.replace(/[^\d]/g, '');
   return raw.trim().startsWith('+') ? `+${digits}` : digits;

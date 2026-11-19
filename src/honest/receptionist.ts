@@ -4,7 +4,7 @@ import Database from 'better-sqlite3';
 import { checkSlot, DEFAULT_CLINIC, isOpen, normalizePhone, slotsOn, type Clinic } from '../clinic.js';
 import { crashIfAt, type CrashPoint } from '../crash.js';
 import type { Receptionist } from '../receptionist.js';
-import { StripeError, type StripeClient } from '../stripe.js';
+import { StripeError, type CheckoutSession, type StripeClient } from '../stripe.js';
 import { toolArguments, type ToolCall, type ToolResult, type TransferResponse, type VapiCall } from '../vapi.js';
 
 const SCHEMA = readFileSync(new URL('./schema.sql', import.meta.url), 'utf8');
@@ -33,14 +33,21 @@ interface BookingRow {
 interface DepositRow {
   booking_ref: string;
   idempotency_key: string;
-  status: 'creating' | 'open' | 'paid' | 'failed' | 'unknown';
+  status: 'creating' | 'open' | 'paid' | 'expired' | 'failed' | 'unknown';
   session_id: string | null;
   url: string | null;
+  created_at: string;
 }
 
 class ArgError extends Error {}
 
 const LIVE = `status in ('held', 'confirmed')`;
+
+/** Expired holds are checked with Stripe at the start of a request, within this much real time. */
+export const SWEEP_BUDGET_MS = 6_000;
+const SWEEP_CALL_TIMEOUT_MS = 2_500;
+/** Stripe keeps idempotency keys for at least 24 hours; past that, a retry with the old key is unsafe. */
+const KEY_SAFE_RETRY_MS = 23 * 60 * 60 * 1000;
 const REF_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'; // no 0/O, 1/I/L: read aloud on a call
 
 /**
@@ -102,11 +109,17 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     return v.trim();
   }
 
-  /** The caller's number: what Vapi saw on the line, or what the caller said. */
-  function callerPhone(call: VapiCall, args: Record<string, unknown>): string {
-    const raw = str(args, 'phone', false) ?? call.customer?.number;
-    const phone = raw ? normalizePhone(raw) : '';
-    if (phone.replace('+', '').length < 7) throw new ArgError('phone is required');
+  /** Caller ID as Vapi saw it on the line, or undefined when the number is withheld. */
+  function lineNumber(call: VapiCall): string | undefined {
+    const n = call.customer?.number ? normalizePhone(call.customer.number) : '';
+    return n.replace('+', '').length >= 7 ? n : undefined;
+  }
+
+  /** A callback number: the one the caller said, else the line. Contact data, never proof of ownership. */
+  function callbackPhone(call: VapiCall, args: Record<string, unknown>): string {
+    const said = str(args, 'phone', false);
+    const phone = said ? normalizePhone(said) : lineNumber(call);
+    if (!phone || phone.replace('+', '').length < 7) throw new ArgError('phone is required');
     return phone;
   }
 
@@ -140,10 +153,10 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   /**
    * A booking the caller may act on: the ref must exist AND belong to the number on the line
    * (`call.customer.number`, as Vapi saw it). A number the caller says is never proof of
-   * ownership; a call without caller ID can book and leave messages, not move or cancel.
+   * ownership; a call without caller ID cannot book, move or cancel, only leave a message.
    */
   function ownedBooking(ref: string, call: VapiCall): BookingRow | undefined {
-    const line = call.customer?.number ? normalizePhone(call.customer.number) : undefined;
+    const line = lineNumber(call);
     if (!line) return undefined;
     const b = db.prepare('select * from bookings where ref = ?').get(ref.toUpperCase()) as BookingRow | undefined;
     return b && b.phone === line ? b : undefined;
@@ -175,7 +188,10 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   function book(call: VapiCall, args: Record<string, unknown>): Outcome {
     const slot = str(args, 'slot')!;
     const name = str(args, 'name')!;
-    const phone = callerPhone(call, args);
+    const owner = lineNumber(call);
+    // Without caller ID nobody could later prove the booking is theirs: offer a message instead.
+    if (!owner) return { result: { status: 'no_caller_id', hint: 'take a message or transfer to the front desk' } };
+    const callback = callbackPhone(call, args);
     const check = checkSlot(clinic, slot, now());
     if (check !== 'ok') return { result: { status: check, slot } };
 
@@ -192,9 +208,9 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     const holdExpiresAt = new Date(now().getTime() + clinic.holdMinutes * 60_000).toISOString();
     try {
       db.prepare(
-        `insert into bookings (ref, vapi_call_id, phone, name, slot, status, hold_expires_at, created_at, updated_at)
-         values (?, ?, ?, ?, ?, 'held', ?, ?, ?)`,
-      ).run(ref, call.id, phone, name, slot, holdExpiresAt, t, t);
+        `insert into bookings (ref, vapi_call_id, phone, callback_phone, name, slot, status, hold_expires_at, created_at, updated_at)
+         values (?, ?, ?, ?, ?, ?, 'held', ?, ?, ?)`,
+      ).run(ref, call.id, owner, callback, name, slot, holdExpiresAt, t, t);
     } catch (err) {
       if (!isUniqueViolation(err)) throw err;
       return { result: { status: 'slot_taken', slot, alternatives: alternatives(slot.slice(0, 10)) } };
@@ -220,21 +236,35 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     return { result: { ...bookingResult(moved, 'rescheduled'), previousSlot: b.slot } };
   }
 
-  function cancel(call: VapiCall, args: Record<string, unknown>): Outcome {
+  /**
+   * Cancelling a held booking first expires its open Checkout Session, so the link cannot be
+   * paid afterwards. A session Stripe says is already paid is recorded and flagged for a refund.
+   * If Stripe cannot be asked, nothing is cancelled and the caller is asked to try again.
+   */
+  async function cancel(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
     const ref = str(args, 'bookingRef')!;
     const b = ownedBooking(ref, call);
     if (!b) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.status === 'cancelled') return { result: { status: 'already_cancelled', bookingRef: b.ref } };
     if (b.status === 'expired') return { result: { status: 'already_released', bookingRef: b.ref } };
+    const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
+    let paid = dep?.status === 'paid';
+    if (dep?.session_id && dep.status === 'open') {
+      const closed = await closeSession(dep.session_id);
+      if (closed === 'unknown') return { error: 'The payment system did not answer, so the booking was not cancelled. Offer to try again.' };
+      if (closed === 'paid') {
+        confirmPaid(b.ref);
+        paid = true;
+      } else setDeposit(b.ref, 'expired');
+    }
     db.prepare(`update bookings set status = 'cancelled', hold_expires_at = null, updated_at = ? where ref = ?`).run(iso(), b.ref);
-    const paid = (db.prepare('select status from deposits where booking_ref = ?').get(b.ref) as { status: string } | undefined)?.status === 'paid';
     return { result: { status: 'cancelled', bookingRef: b.ref, slot: b.slot, ...(paid ? { depositRefund: 'handled by the front desk' } : {}) } };
   }
 
   function takeMessage(call: VapiCall, args: Record<string, unknown>): Outcome {
     const name = str(args, 'name')!;
     const reason = str(args, 'reason')!;
-    const phone = callerPhone(call, args);
+    const phone = callbackPhone(call, args);
     db.prepare(
       `insert into messages (vapi_call_id, name, phone, reason, created_at) values (?, ?, ?, ?, ?)
        on conflict (vapi_call_id) do nothing`,
@@ -252,12 +282,35 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     check_availability: (_c, a) => checkAvailability(a),
     book_appointment: book,
     reschedule_appointment: reschedule,
-    cancel_appointment: cancel,
     take_message: takeMessage,
     lookup_faq: (_c, a) => lookupFaq(a),
   };
 
   // ---- deposits ----------------------------------------------------------------------------
+
+  function setDeposit(ref: string, status: DepositRow['status']): void {
+    db.prepare('update deposits set status = ?, updated_at = ? where booking_ref = ?').run(status, iso(), ref);
+  }
+
+  /**
+   * Makes an open Checkout Session unpayable. `expired`: Stripe expired it (or it already was).
+   * `paid`: it was paid before it could be expired. `unknown`: Stripe could not be asked.
+   */
+  async function closeSession(id: string, timeoutMs?: number): Promise<'expired' | 'paid' | 'unknown'> {
+    const read = (x: CheckoutSession) => (x.payment_status === 'paid' ? 'paid' : x.status === 'expired' ? 'expired' : 'unknown');
+    try {
+      return read(await opts.stripe.expireSession(id, timeoutMs));
+    } catch (err) {
+      if (!(err instanceof StripeError)) throw err;
+      if (err.outcome === 'unknown') return 'unknown';
+    }
+    try {
+      return read(await opts.stripe.getSession(id, timeoutMs)); // refused: it was not open any more
+    } catch (err) {
+      if (err instanceof StripeError) return 'unknown';
+      throw err;
+    }
+  }
 
   const confirmPaid = db.transaction((ref: string) => {
     const t = iso();
@@ -280,12 +333,19 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow;
     if (dep.status === 'open' || dep.status === 'paid') return { result: { status: 'link_sent', bookingRef: b.ref, url: dep.url } };
     if (inFlight.has(b.ref)) return { result: { status: 'pending', bookingRef: b.ref } };
+    if (dep.status === 'unknown' && now().getTime() - Date.parse(dep.created_at) > KEY_SAFE_RETRY_MS) {
+      // Stripe may have pruned the key: a retry could create a second session. A person decides.
+      return { error: 'The deposit link needs the front desk to check it. Offer to transfer or take a message.' };
+    }
 
     // `creating` left by a dead process, `unknown` or `failed`: send again with the SAME key.
     inFlight.add(b.ref);
     try {
       db.prepare(`update deposits set status = 'creating', error = null, updated_at = ? where booking_ref = ?`).run(iso(), b.ref);
-      const session = await opts.stripe.createDepositSession({ bookingRef: b.ref, amountCents: clinic.depositCents, currency: clinic.currency }, key);
+      const session = await opts.stripe.createDepositSession(
+        { bookingRef: b.ref, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
+        key,
+      );
       crashIfAt(opts.fault, 'after_stripe');
       db.prepare(`update deposits set status = 'open', session_id = ?, url = ?, updated_at = ? where booking_ref = ?`).run(
         session.id,
@@ -330,24 +390,27 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   }
 
   /**
-   * Holds past their expiry are released, except when Stripe says the deposit was paid (the
-   * booking is confirmed instead) or Stripe cannot be asked (the hold stays until it can).
+   * Holds past their expiry are released only after their Checkout Session is expired at Stripe,
+   * so a released slot's link can no longer be paid. A session Stripe says is paid confirms the
+   * booking instead. If Stripe cannot be asked, or a session may exist that cannot be looked up,
+   * the hold stays. The sweep stops after SWEEP_BUDGET_MS of real time so a hanging Stripe cannot
+   * push the request past Vapi's 20 s timeout; what is left is swept on a later request.
    */
   async function releaseExpiredHolds(): Promise<void> {
+    const started = Date.now();
     const due = db.prepare(`select * from bookings where status = 'held' and hold_expires_at <= ?`).all(iso()) as BookingRow[];
     for (const b of due) {
+      if (Date.now() - started > SWEEP_BUDGET_MS) break;
       const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
-      if (dep && !dep.session_id && dep.status !== 'failed') continue; // a session may exist that we cannot look up yet
-      if (dep?.session_id) {
-        try {
-          if ((await opts.stripe.getSession(dep.session_id)).payment_status === 'paid') {
-            confirmPaid(b.ref);
-            continue;
-          }
-        } catch (err) {
-          if (err instanceof StripeError) continue;
-          throw err;
+      if (dep && !dep.session_id && dep.status !== 'failed') continue; // a session may exist that we cannot look up
+      if (dep?.session_id && dep.status === 'open') {
+        const closed = await closeSession(dep.session_id, SWEEP_CALL_TIMEOUT_MS);
+        if (closed === 'paid') {
+          confirmPaid(b.ref);
+          continue;
         }
+        if (closed === 'unknown') continue;
+        setDeposit(b.ref, 'expired');
       }
       db.prepare(`update bookings set status = 'expired', updated_at = ? where ref = ? and status = 'held'`).run(iso(), b.ref);
     }
@@ -385,7 +448,8 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
         if (name === 'book_appointment' && 'result' in outcome && outcome.result.status === 'booked') crashIfAt(opts.fault, 'after_booking');
         return answer(outcome);
       }
-      if (name === 'send_deposit_link') outcome = await sendDepositLink(call, args);
+      if (name === 'cancel_appointment') outcome = await cancel(call, args);
+      else if (name === 'send_deposit_link') outcome = await sendDepositLink(call, args);
       else if (name === 'check_deposit') outcome = await checkDeposit(call, args);
       else outcome = { error: `unknown tool: ${name}` };
     } catch (err) {
