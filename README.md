@@ -82,7 +82,7 @@ Node 22.14 or later (the `better-sqlite3` 13 prebuilt binary needs N-API 10; on 
 
 ```sh
 npm ci
-npm test            # 53 tests with node:test; all but one go through HTTP
+npm test            # 54 tests with node:test; all but one go through HTTP
 npm run typecheck
 npm run footguns    # each footgun must make exactly its documented tests fail
 ```

@@ -53,6 +53,17 @@ describe('found by the review', () => {
     assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'held' }]);
   });
 
+  it('R1f: a cancel while the deposit link is still being created is refused, so no payable link outlives it', async () => {
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
+    rig.stripe.delayNext(400);
+    const link = rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    await new Promise((r) => setTimeout(r, 100));
+    const cancel = await rig.tool('call-2', 'cancel_appointment', { bookingRef: ref });
+    assert.match(cancel.error!, /still being created/);
+    assert.equal((await link).result!.status, 'link_sent');
+    assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'held' }]);
+  });
+
   it('P2a: a spoken number in another format does not lock the calling line out of its booking', async () => {
     const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz', phone: '(555) 555-0123' })).result!.bookingRef;
     assert.equal((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).result!.status, 'link_sent');

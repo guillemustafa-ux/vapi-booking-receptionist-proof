@@ -247,6 +247,8 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     if (!b) return { result: { status: 'not_found', bookingRef: ref } };
     if (b.status === 'cancelled') return { result: { status: 'already_cancelled', bookingRef: b.ref } };
     if (b.status === 'expired') return { result: { status: 'already_released', bookingRef: b.ref } };
+    // A deposit link still being created would come back payable after the cancel.
+    if (inFlight.has(b.ref)) return { error: 'The deposit link is still being created, so the booking was not cancelled. Offer to try again in a moment.' };
     const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
     let paid = dep?.status === 'paid';
     if (dep?.session_id && dep.status === 'open') {

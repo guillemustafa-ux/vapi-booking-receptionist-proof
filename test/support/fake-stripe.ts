@@ -14,6 +14,8 @@ export interface FakeStripe {
   readonly requests: number;
   /** The next create: `drop` creates the session, then destroys the socket (the answer is lost); `500` creates nothing and is stored for its key. */
   failNext(mode: 'drop' | '500'): void;
+  /** The next create answers only after this many milliseconds. */
+  delayNext(ms: number): void;
   /** Stop answering (every request is dropped) until `answerAgain()`. */
   goDark(): void;
   /** Accept requests and never answer them (a hanging Stripe) until `answerAgain()`. */
@@ -41,6 +43,7 @@ export async function startFakeStripe(): Promise<FakeStripe> {
   let created = 0;
   let requests = 0;
   let nextFailure: 'drop' | '500' | undefined;
+  let nextDelayMs = 0;
   let dark = false;
   let hanging = false;
 
@@ -88,6 +91,11 @@ export async function startFakeStripe(): Promise<FakeStripe> {
         res.writeHead(prior.status, { 'content-type': 'application/json', 'idempotent-replayed': 'true' }).end(prior.body);
         return;
       }
+      if (nextDelayMs) {
+        const ms = nextDelayMs;
+        nextDelayMs = 0;
+        await new Promise((r) => setTimeout(r, ms));
+      }
       const failure = nextFailure;
       nextFailure = undefined;
       if (failure === '500') {
@@ -130,6 +138,7 @@ export async function startFakeStripe(): Promise<FakeStripe> {
       return requests;
     },
     failNext: (mode) => (nextFailure = mode),
+    delayNext: (ms) => (nextDelayMs = ms),
     goDark: () => (dark = true),
     hang: () => (hanging = true),
     answerAgain: () => {
