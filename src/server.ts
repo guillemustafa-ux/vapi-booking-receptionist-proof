@@ -1,4 +1,4 @@
-import { createServer, type IncomingMessage, type Server } from 'node:http';
+import { createServer, type IncomingMessage, type Server, type ServerResponse } from 'node:http';
 import type { Receptionist } from './receptionist.js';
 import { SIGNATURE_HEADER, TIMESTAMP_HEADER, verifyRequest } from './signature.js';
 import { isServerMessage } from './vapi.js';
@@ -14,6 +14,9 @@ export interface ReceiverOptions {
 
 export const PATH = '/vapi';
 
+/** Larger bodies are refused with 413 before they are buffered. */
+export const MAX_BODY_BYTES = 1024 * 1024;
+
 /**
  * The Server URL on plain `node:http`. POST /vapi only:
  *
@@ -27,7 +30,16 @@ export const PATH = '/vapi';
 export function createReceiver(opts: ReceiverOptions): Server {
   const log = opts.log ?? ((line: string) => void process.stderr.write(`${line}\n`));
   const now = opts.now ?? (() => new Date());
-  return createServer(async (req, res) => {
+  return createServer((req, res) => {
+    handle(req, res).catch((err: unknown) => {
+      // A request that failed before it could be answered (an aborted upload, a body too large).
+      log(`request failed: ${err instanceof Error ? err.message : String(err)}`);
+      if (!res.headersSent) res.writeHead(err instanceof BodyTooLarge ? 413 : 400).end();
+      else res.destroy();
+    });
+  });
+
+  async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const url = new URL(req.url ?? '/', 'http://receiver.local');
     if (url.pathname !== PATH) {
       res.writeHead(404).end();
@@ -38,8 +50,18 @@ export function createReceiver(opts: ReceiverOptions): Server {
       return;
     }
 
+    const signature = header(req, SIGNATURE_HEADER);
+    const timestamp = header(req, TIMESTAMP_HEADER);
+    // Cheap refusals first: nothing is buffered for a request that cannot be authentic.
+    const early = verifyRequest(Buffer.alloc(0), signature, timestamp, opts.secret, now().getTime());
+    if (early === 'no_secret' || early === 'missing_header' || early === 'stale') {
+      log(`refused: ${early}`);
+      res.writeHead(401).end();
+      return;
+    }
+
     const raw = await readRaw(req);
-    const refused = verifyRequest(raw, header(req, SIGNATURE_HEADER), header(req, TIMESTAMP_HEADER), opts.secret, now().getTime());
+    const refused = verifyRequest(raw, signature, timestamp, opts.secret, now().getTime());
     if (refused) {
       log(`refused: ${refused}`);
       res.writeHead(401).end();
@@ -71,7 +93,7 @@ export function createReceiver(opts: ReceiverOptions): Server {
       log(`processing failed: ${err instanceof Error ? err.message : String(err)}`);
       res.writeHead(500).end();
     }
-  });
+  }
 }
 
 function header(req: IncomingMessage, name: string): string | undefined {
@@ -79,11 +101,27 @@ function header(req: IncomingMessage, name: string): string | undefined {
   return Array.isArray(v) ? v[0] : v;
 }
 
+class BodyTooLarge extends Error {}
+
 function readRaw(req: IncomingMessage): Promise<Buffer> {
   return new Promise((resolve, reject) => {
+    if (Number(req.headers['content-length'] ?? 0) > MAX_BODY_BYTES) {
+      reject(new BodyTooLarge('body too large'));
+      return;
+    }
     const chunks: Buffer[] = [];
-    req.on('data', (c: Buffer) => chunks.push(c));
+    let size = 0;
+    req.on('data', (c: Buffer) => {
+      size += c.length;
+      if (size > MAX_BODY_BYTES) {
+        req.removeAllListeners('data');
+        reject(new BodyTooLarge('body too large'));
+        return;
+      }
+      chunks.push(c);
+    });
     req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('aborted', () => reject(new Error('request aborted')));
     req.on('error', reject);
   });
 }

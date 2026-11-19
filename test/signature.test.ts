@@ -3,7 +3,7 @@ import type { Server } from 'node:http';
 import assert from 'node:assert/strict';
 import { afterEach, describe, it } from 'node:test';
 import type { Receptionist } from '../src/receptionist.js';
-import { createReceiver } from '../src/server.js';
+import { createReceiver, MAX_BODY_BYTES } from '../src/server.js';
 import { sign, verifyRequest } from '../src/signature.js';
 import { postRaw, SECRET, toolCallsBody, type PostOptions } from './support/fake-vapi.js';
 
@@ -88,6 +88,13 @@ describe('signed requests only (S3)', () => {
 
 describe('envelope', () => {
   afterEach(closeServer);
+
+  it('answers 413 to a signed body over 1 MB and never reaches the receptionist', async () => {
+    const { url, seen } = await start();
+    const big = toolCallsBody('call-1', [{ id: 'tc-1', name: 'lookup_faq', args: { topic: 'x'.repeat(MAX_BODY_BYTES) } }]);
+    assert.equal((await postRaw(url, big, NOW)).status, 413);
+    assert.deepEqual(seen, []);
+  });
 
   it('answers 400 to a signed body that is not JSON', async () => {
     const { url } = await start();
