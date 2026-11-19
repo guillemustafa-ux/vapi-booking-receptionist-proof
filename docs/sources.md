@@ -7,9 +7,11 @@ the docs are silent, the assumption is named.
 
 **Server messages and the `tool-calls` contract** — https://docs.vapi.ai/server-url/events
 
-> Most events are informational and do not require a response, but certain types like
-> 'assistant-request', 'tool-calls', 'transfer-destination-request', and 'knowledge-base-request'
-> expect a response.
+> Most events are informational and do not require a response. Responses are only expected for
+> these types sent to your Server URL:
+
+followed by a list that includes `tool-calls` and `transfer-destination-request` (and
+`assistant-request` and `knowledge-base-request`, which this receiver answers with `{}`).
 
 Request: `message.type = "tool-calls"`, `message.call`, `message.toolCallList[]` with `id`,
 `type: "function"`, `function.name`, `function.arguments`. Response: `{"results": [{"name",
@@ -41,9 +43,13 @@ https://docs.vapi.ai/whats-new/2025/8/27
 
 `backoffPlan.maxRetries` accepts 0 to 10.
 
-*Assumption:* a `backoffPlan` retry resends the same body, so the same `toolCallId`. The model
-calling a tool again after a slow or failed answer produces a new id. The receiver handles both
-(S4 and S5 in the tests).
+*Assumption:* a `backoffPlan` retry resends the same body, so the same `toolCallId` (the docs
+say a request is "retried for any non-2xx status code" and to use the `toolCallId` to recognize a
+retry, but not that the body is identical). The model calling a tool again after a slow or failed
+answer produces a new id. The receiver handles both (S4 and S5 in the tests).
+
+*Assumption:* `message.call.customer.number` carries the caller ID in E.164 and is empty or
+absent when the number is withheld. Ownership of a booking rests on it.
 
 **Server authentication (HMAC)** — https://docs.vapi.ai/server-url/server-authentication,
 https://docs.vapi.ai/api-reference/webhooks/server-message
@@ -52,6 +58,10 @@ https://docs.vapi.ai/api-reference/webhooks/server-message
 > `timestampHeader` […] Defaults to 'x-timestamp'.
 > `payloadFormat` […] Defaults to '{timestamp}.{body}'.
 > `signatureEncoding` […] Defaults to 'hex'.
+
+`algorithm` is a required field of the credential, not a default: this receiver expects
+`sha256`, hex, with no signature prefix (`signaturePrefix` unset). A credential configured with a
+prefix such as `sha256=` would be refused.
 
 *Assumption:* the timestamp's unit is not stated. The receiver reads a value above 10^12 as
 milliseconds and anything else as seconds, and refuses a request more than 5 minutes from its
@@ -76,12 +86,25 @@ clock.
 
 > Limit retries of an unresolved operation to the first 24 hours after the original request,
 > using the same key and parameters. For example, if an object creation request receives no
-> response because of a connection error, retrying within that window prevents creating a second
-> object.
+> response because of a connection error, retrying within that window prevents the retry from
+> creating a second object.
 
 > If the outcome is still unknown after that window, don't retry with either the old key or a new
 > one.
 
-The fake Stripe in `test/support/fake-stripe.ts` implements the first three quotes: a stored
-response per key (a created session or a 500), replayed with `Idempotent-Replayed: true`, and a
-400 `idempotency_error` for the same key with different parameters.
+**Checkout Session lifetime and expiry** — https://docs.stripe.com/api/checkout/sessions/create,
+https://docs.stripe.com/api/checkout/sessions/expire
+
+> `expires_at` […] can be anywhere from 30 minutes to 24 hours after Checkout Session creation.
+> By default, this value is 24 hours […]
+
+A session outlives the receptionist's 15-minute hold, so the receiver calls
+`POST /v1/checkout/sessions/{id}/expire` before it releases a hold or cancels a booking, and treats
+a refused expire (a session that is not open any more) by reading the session. `success_url` is
+listed as "required conditionally"; the receiver sends a placeholder.
+
+The fake Stripe in `test/support/fake-stripe.ts` implements the idempotency quotes (a stored
+response per key, a created session or a 500, replayed with `Idempotent-Replayed: true`, and a 400
+`idempotency_error` for the same key with different parameters) and the expiry rule (an open
+session can be expired; a paid or expired one cannot, and an expired one cannot be paid). It is a
+model of the documentation, not of Stripe.

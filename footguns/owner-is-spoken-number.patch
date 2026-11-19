@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index 05f4e02..89e28e7 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -188,7 +188,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+   function book(call: VapiCall, args: Record<string, unknown>): Outcome {
+     const slot = str(args, 'slot')!;
+     const name = str(args, 'name')!;
+-    const owner = lineNumber(call);
++    const owner = str(args, 'phone', false) ?? lineNumber(call);
+     // Without caller ID nobody could later prove the booking is theirs: offer a message instead.
+     if (!owner) return { result: { status: 'no_caller_id', hint: 'take a message or transfer to the front desk' } };
+     const callback = callbackPhone(call, args);

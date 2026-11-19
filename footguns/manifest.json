@@ -38,7 +38,7 @@
     ]
   },
   "fresh-stripe-key": {
-    "description": "The Stripe Idempotency-Key gets a random suffix: a retry after a lost answer, a crash or a stored 500 creates a second Checkout Session.",
+    "description": "The Stripe Idempotency-Key gets a random suffix: a retry after a lost answer or a crash creates a second Checkout Session, and a retry after a stored 500 creates one where the stored 500 would have been replayed.",
     "expectedFailures": [
       "killed after Stripe created the session",
       "S7: a lost Stripe answer is retried with the same key",
@@ -46,17 +46,41 @@
     ]
   },
   "release-without-asking-stripe": {
-    "description": "An expired hold is released without asking Stripe whether the deposit was paid.",
+    "description": "An expired hold is released without asking Stripe: a paid deposit is lost and the old link stays payable.",
     "expectedFailures": [
       "S7: a deposit paid after the hold ran out",
-      "S7: with Stripe unreachable when the hold runs out"
+      "S7: with Stripe unreachable when the hold runs out",
+      "P1: a released hold expires its Checkout Session first",
+      "a hanging Stripe cannot hold a request"
+    ]
+  },
+  "cancel-without-expiring": {
+    "description": "A cancel no longer expires the open Checkout Session: the link of a cancelled booking can still be paid.",
+    "expectedFailures": [
+      "P1: cancelling expires the open link",
+      "P1: with Stripe unreachable, a cancel changes nothing"
+    ]
+  },
+  "no-sweep-budget": {
+    "description": "The expired-hold sweep has no time budget: a hanging Stripe holds every request past Vapi's 20 s timeout.",
+    "expectedFailures": [
+      "a hanging Stripe cannot hold a request"
+    ]
+  },
+  "owner-is-spoken-number": {
+    "description": "The number the caller says becomes the owner of the booking instead of the caller ID on the line.",
+    "expectedFailures": [
+      "P2a: a spoken number in another format",
+      "P2b: the spoken number is a callback number",
+      "P13: a call with the number withheld"
     ]
   },
   "no-ownership-check": {
     "description": "Any caller who knows a booking ref can move, cancel or pay for it.",
     "expectedFailures": [
       "only the caller who booked can move or cancel it",
-      "a phone number said on another line is not proof of ownership"
+      "a phone number said on another line is not proof of ownership",
+      "P2b: the spoken number is a callback number"
     ]
   }
 }

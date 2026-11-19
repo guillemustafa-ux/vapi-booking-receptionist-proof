@@ -1,8 +1,8 @@
 diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
-index df87d5e..8b14831 100644
+index 05f4e02..d312aa2 100644
 --- a/src/honest/receptionist.ts
 +++ b/src/honest/receptionist.ts
-@@ -179,7 +179,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+@@ -195,7 +195,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
      const check = checkSlot(clinic, slot, now());
      if (check !== 'ok') return { result: { status: check, slot } };
  

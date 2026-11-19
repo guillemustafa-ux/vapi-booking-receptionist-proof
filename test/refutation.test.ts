@@ -75,7 +75,7 @@ describe('found by the review', () => {
   });
 
   it('a hanging Stripe cannot hold a request past Vapi\'s 20 s timeout', async () => {
-    for (const [i, caller] of ['+15555550101', '+15555550102', '+15555550103'].entries()) {
+    for (const [i, caller] of ['+15555550101', '+15555550102', '+15555550103', '+15555550104', '+15555550105', '+15555550106'].entries()) {
       const ref = (await rig.tool(`c${i}`, 'book_appointment', { slot: `${MONDAY}T1${i}:00`, name: `P${i}` }, { caller })).result!.bookingRef;
       await rig.tool(`c${i}`, 'send_deposit_link', { bookingRef: ref }, { caller });
     }
@@ -85,7 +85,7 @@ describe('found by the review', () => {
     const faq = await rig.tool('call-9', 'lookup_faq', { topic: 'hours' });
     const elapsed = Date.now() - started;
     assert.equal(faq.result!.topic, 'hours');
-    assert.ok(elapsed < 12_000, `took ${elapsed} ms`);
-    assert.equal(rows(rig, `select * from bookings where status = 'held'`).length, 3);
+    assert.ok(elapsed < 11_000, `took ${elapsed} ms`);
+    assert.equal(rows(rig, `select * from bookings where status = 'held'`).length, 6);
   });
 });

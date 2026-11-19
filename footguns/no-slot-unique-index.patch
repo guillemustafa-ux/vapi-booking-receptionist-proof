@@ -1,8 +1,8 @@
 diff --git a/src/honest/schema.sql b/src/honest/schema.sql
-index 22213cf..bffd62f 100644
+index fade655..d121d88 100644
 --- a/src/honest/schema.sql
 +++ b/src/honest/schema.sql
-@@ -27,7 +27,7 @@ create table if not exists bookings (
+@@ -28,7 +28,7 @@ create table if not exists bookings (
  );
  
  -- The database, not a read-then-write check, refuses a second live booking on a slot.

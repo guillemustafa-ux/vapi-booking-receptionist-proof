@@ -1,8 +1,8 @@
 diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
-index df87d5e..b849c41 100644
+index 05f4e02..b02dc1b 100644
 --- a/src/honest/receptionist.ts
 +++ b/src/honest/receptionist.ts
-@@ -271,7 +271,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+@@ -324,7 +324,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
      if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
      if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingRef: b.ref } };
  

@@ -1,8 +1,8 @@
 diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
-index df87d5e..df8c381 100644
+index 05f4e02..0df8d72 100644
 --- a/src/honest/receptionist.ts
 +++ b/src/honest/receptionist.ts
-@@ -79,7 +79,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+@@ -86,7 +86,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
      };
      // `started`: a dead process, or this process still on it. Every tool is idempotent on its
      // business key, so running it again cannot duplicate anything.
