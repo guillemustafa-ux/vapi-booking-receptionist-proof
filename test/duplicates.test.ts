@@ -38,6 +38,14 @@ describe('duplicates', () => {
     assert.equal(rig.stripe.created, 1);
   });
 
+  it('S4: a late redelivery after the caller cancelled does not book again', async () => {
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' })).result!.bookingRef;
+    await rig.tool('call-1', 'cancel_appointment', { bookingRef: ref });
+    const late = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' });
+    assert.equal(late.result!.bookingRef, ref);
+    assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'cancelled' }]);
+  });
+
   it('S5: the model re-calling book_appointment with a new id gets the same booking back', async () => {
     const first = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
     const recall = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
