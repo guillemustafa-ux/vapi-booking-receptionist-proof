@@ -4,6 +4,7 @@
  */
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, describe, it } from 'node:test';
+import { createHonestReceptionist } from '../src/honest/receptionist.js';
 import { CALLER } from './support/fake-vapi.js';
 import { MONDAY, rows, startRig, type Rig } from './support/harness.js';
 
@@ -83,6 +84,19 @@ describe('found by the review', () => {
     assert.equal(rows(rig, 'select * from bookings').length, 0);
     const msg = await rig.tool('call-1', 'take_message', { name: 'Ana Ruiz', reason: 'book a cleaning', phone: '+15555550123' }, { caller: '' });
     assert.equal(msg.result!.status, 'message_taken');
+  });
+
+  it('DEMO_CALLER_ID: a call without caller ID is owned by the demo number; a real caller ID ignores it', async () => {
+    await rig.close();
+    rig = await startRig((o) => createHonestReceptionist({ ...o, demoCallerId: '+15555550199' }));
+    const web = await rig.tool('web-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { caller: '' });
+    assert.equal(web.result!.status, 'booked');
+    const phone = await rig.tool('call-2', 'book_appointment', { slot: `${MONDAY}T11:00`, name: 'Ben Cole' }, { caller: BEN });
+    assert.equal(phone.result!.status, 'booked');
+    assert.deepEqual(rows(rig, 'select name, phone from bookings order by slot'), [
+      { name: 'Ana Ruiz', phone: '+15555550199' },
+      { name: 'Ben Cole', phone: BEN },
+    ]);
   });
 
   it('a hanging Stripe cannot hold a request past Vapi\'s 20 s timeout', async () => {

@@ -15,6 +15,12 @@ export interface ReceptionistOptions {
   clinic?: Clinic;
   now?: () => Date;
   fault?: CrashPoint;
+  /**
+   * DEMO ONLY. The owner number given to a call that carries no caller ID: Vapi web calls and
+   * Vapi voice simulations have no `call.customer.number`. Unset (the default) such calls cannot
+   * book. A call that has a caller ID always uses its own; never set this for real phone traffic.
+   */
+  demoCallerId?: string;
 }
 
 /** What a tool produced: spoken back by the assistant (`result`) or reported as a failure (`error`). */
@@ -112,7 +118,9 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   /** Caller ID as Vapi saw it on the line, or undefined when the number is withheld. */
   function lineNumber(call: VapiCall): string | undefined {
     const n = call.customer?.number ? normalizePhone(call.customer.number) : '';
-    return n.replace('+', '').length >= 7 ? n : undefined;
+    if (n.replace('+', '').length >= 7) return n;
+    const demo = opts.demoCallerId ? normalizePhone(opts.demoCallerId) : '';
+    return demo.replace('+', '').length >= 7 ? demo : undefined;
   }
 
   /** A callback number: the one the caller said, else the line. Contact data, never proof of ownership. */
