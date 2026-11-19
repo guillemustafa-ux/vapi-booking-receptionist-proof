@@ -116,13 +116,13 @@ describe('duplicates', () => {
     assert.deepEqual(rows(rig, 'select status, session_id from deposits'), [{ status: 'open', session_id: 'cs_test_0001' }]);
   });
 
-  it('S7: a Stripe 500 creates nothing; the retry creates one session', async () => {
+  it('S7: a Stripe 500 is replayed for the same key: no second session, the deposit is left for the front desk', async () => {
     const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
     rig.stripe.failNext('500');
     assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).error);
+    assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).error);
     assert.equal(rig.stripe.created, 0);
-    assert.equal((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).result!.status, 'link_sent');
-    assert.equal(rig.stripe.created, 1);
+    assert.deepEqual(rows(rig, 'select status, session_id from deposits'), [{ status: 'unknown', session_id: null }]);
   });
 
   it('S7: a deposit paid after the hold ran out confirms the booking instead of releasing the slot', async () => {

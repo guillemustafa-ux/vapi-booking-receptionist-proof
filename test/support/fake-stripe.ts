@@ -12,7 +12,7 @@ export interface FakeStripe {
   /** Checkout Sessions actually created: the number that would cost money. */
   readonly created: number;
   readonly requests: number;
-  /** The next create: `drop` creates the session, then destroys the socket (the answer is lost); `500` creates nothing. */
+  /** The next create: `drop` creates the session, then destroys the socket (the answer is lost); `500` creates nothing and is stored for its key. */
   failNext(mode: 'drop' | '500'): void;
   /** Stop answering (every request is dropped) until `answerAgain()`. */
   goDark(): void;
@@ -73,8 +73,11 @@ export async function startFakeStripe(): Promise<FakeStripe> {
       const failure = nextFailure;
       nextFailure = undefined;
       if (failure === '500') {
-        res.writeHead(500).end(JSON.stringify({ error: { type: 'api_error' } }));
-        return; // a 500 is not stored: Stripe did not start executing
+        // Execution began and failed: Stripe v1 stores this 500 and replays it for the same key.
+        const body = JSON.stringify({ error: { type: 'api_error' } });
+        if (key) byKey.set(key, { params: raw, status: 500, body });
+        res.writeHead(500, { 'content-type': 'application/json' }).end(body);
+        return;
       }
       const form = new URLSearchParams(raw);
       const id = `cs_test_${String(++created).padStart(4, '0')}`;

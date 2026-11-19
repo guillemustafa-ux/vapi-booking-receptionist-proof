@@ -38,10 +38,11 @@
     ]
   },
   "fresh-stripe-key": {
-    "description": "The Stripe Idempotency-Key gets a random suffix: a retry after a lost answer or a crash creates a second Checkout Session.",
+    "description": "The Stripe Idempotency-Key gets a random suffix: a retry after a lost answer, a crash or a stored 500 creates a second Checkout Session.",
     "expectedFailures": [
       "killed after Stripe created the session",
-      "S7: a lost Stripe answer is retried with the same key"
+      "S7: a lost Stripe answer is retried with the same key",
+      "S7: a Stripe 500 is replayed for the same key"
     ]
   },
   "release-without-asking-stripe": {
