@@ -1,0 +1,12 @@
+node_modules/
+.env
+.env.local
+.env.*.local
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+# test state lives in the OS temp dir; these guard against a misconfigured run
+tmp/
+scratch/
+*.log
