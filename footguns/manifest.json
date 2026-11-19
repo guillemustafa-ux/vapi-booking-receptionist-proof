@@ -1,0 +1,61 @@
+{
+  "skip-signature-check": {
+    "description": "verifyRequest accepts before looking at the secret, the signature or the timestamp: any POST is processed.",
+    "expectedFailures": [
+      "refuses no signature header",
+      "refuses another secret",
+      "refuses body changed after signing",
+      "refuses timestamp 6 minutes old",
+      "refuses timestamp 6 minutes ahead",
+      "refuses non-numeric timestamp",
+      "refuses non-hex signature",
+      "refuses everything when no secret is configured",
+      "refuses a signed request replayed after the freshness window"
+    ]
+  },
+  "no-tool-call-ledger": {
+    "description": "A redelivered tool call id no longer answers its stored outcome: the tool runs again.",
+    "expectedFailures": [
+      "S4: a late redelivery after the caller cancelled"
+    ]
+  },
+  "no-slot-unique-index": {
+    "description": "The one-live-booking-per-slot index becomes a plain index: the database no longer refuses a second booking on a slot.",
+    "expectedFailures": [
+      "S6: two callers racing for one slot",
+      "S6: a reschedule onto a taken slot",
+      "S7: a deposit paid after the hold ran out",
+      "S7: with Stripe unreachable when the hold runs out",
+      "4. double-booking attempt"
+    ]
+  },
+  "no-recall-lookup": {
+    "description": "book_appointment no longer looks for the booking this call already made: the model re-calling the tool is treated as a new booking.",
+    "expectedFailures": [
+      "killed after the booking committed",
+      "S5: the model re-calling book_appointment",
+      "S5: a second slot in the same call"
+    ]
+  },
+  "fresh-stripe-key": {
+    "description": "The Stripe Idempotency-Key gets a random suffix: a retry after a lost answer or a crash creates a second Checkout Session.",
+    "expectedFailures": [
+      "killed after Stripe created the session",
+      "S7: a lost Stripe answer is retried with the same key"
+    ]
+  },
+  "release-without-asking-stripe": {
+    "description": "An expired hold is released without asking Stripe whether the deposit was paid.",
+    "expectedFailures": [
+      "S7: a deposit paid after the hold ran out",
+      "S7: with Stripe unreachable when the hold runs out"
+    ]
+  },
+  "no-ownership-check": {
+    "description": "Any caller who knows a booking ref can move, cancel or pay for it.",
+    "expectedFailures": [
+      "only the caller who booked can move or cancel it",
+      "a phone number said on another line is not proof of ownership"
+    ]
+  }
+}

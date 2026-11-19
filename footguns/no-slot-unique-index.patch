@@ -1,0 +1,13 @@
+diff --git a/src/honest/schema.sql b/src/honest/schema.sql
+index 22213cf..bffd62f 100644
+--- a/src/honest/schema.sql
++++ b/src/honest/schema.sql
+@@ -27,7 +27,7 @@ create table if not exists bookings (
+ );
+ 
+ -- The database, not a read-then-write check, refuses a second live booking on a slot.
+-create unique index if not exists one_live_booking_per_slot
++create index if not exists one_live_booking_per_slot
+   on bookings (slot) where status in ('held', 'confirmed');
+ 
+ -- One live booking per call: the model re-sending book_appointment gets the first booking back.

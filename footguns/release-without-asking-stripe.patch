@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index df87d5e..d206c7e 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -338,7 +338,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+     for (const b of due) {
+       const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
+       if (dep && !dep.session_id && dep.status !== 'failed') continue; // a session may exist that we cannot look up yet
+-      if (dep?.session_id) {
++      if (dep?.session_id && false) {
+         try {
+           if ((await opts.stripe.getSession(dep.session_id)).payment_status === 'paid') {
+             confirmPaid(b.ref);

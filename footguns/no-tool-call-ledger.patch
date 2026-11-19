@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index df87d5e..df8c381 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -79,7 +79,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+     };
+     // `started`: a dead process, or this process still on it. Every tool is idempotent on its
+     // business key, so running it again cannot duplicate anything.
+-    return row.status === 'done' && row.outcome_json ? (JSON.parse(row.outcome_json) as Outcome) : undefined;
++    return undefined;
+   });
+ 
+   function finish(toolCallId: string, outcome: Outcome): void {

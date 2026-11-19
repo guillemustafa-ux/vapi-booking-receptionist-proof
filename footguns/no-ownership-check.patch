@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index df87d5e..d8271de 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -146,7 +146,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+     const line = call.customer?.number ? normalizePhone(call.customer.number) : undefined;
+     if (!line) return undefined;
+     const b = db.prepare('select * from bookings where ref = ?').get(ref.toUpperCase()) as BookingRow | undefined;
+-    return b && b.phone === line ? b : undefined;
++    return b;
+   }
+ 
+   function isUniqueViolation(err: unknown): boolean {

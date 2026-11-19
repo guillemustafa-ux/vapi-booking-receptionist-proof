@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index df87d5e..8b14831 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -179,7 +179,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+     const check = checkSlot(clinic, slot, now());
+     if (check !== 'ok') return { result: { status: check, slot } };
+ 
+-    const mine = db.prepare(`select * from bookings where vapi_call_id = ? and ${LIVE}`).get(call.id) as BookingRow | undefined;
++    const mine = db.prepare(`select * from bookings where vapi_call_id = ? and 0`).get(call.id) as BookingRow | undefined;
+     if (mine) {
+       // The model re-sent the booking (new tool call id, same call): same slot = the same booking.
+       return mine.slot === slot

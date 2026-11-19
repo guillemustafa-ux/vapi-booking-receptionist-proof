@@ -1,0 +1,13 @@
+diff --git a/src/honest/receptionist.ts b/src/honest/receptionist.ts
+index df87d5e..b849c41 100644
+--- a/src/honest/receptionist.ts
++++ b/src/honest/receptionist.ts
+@@ -271,7 +271,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
+     if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
+     if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingRef: b.ref } };
+ 
+-    const key = `deposit-${b.ref}`;
++    const key = `deposit-${b.ref}-${randomInt(1e9)}`;
+     const t = iso();
+     db.prepare(
+       `insert into deposits (booking_ref, idempotency_key, status, created_at, updated_at) values (?, ?, 'creating', ?, ?)

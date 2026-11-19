@@ -8,7 +8,8 @@
   "scripts": {
     "test": "node --import tsx --test \"test/**/*.test.ts\"",
     "typecheck": "tsc --noEmit",
-    "footgun": "node scripts/footgun.mjs"
+    "footgun": "node scripts/footgun.mjs",
+    "footguns": "node scripts/footgun.mjs --all"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3"
