@@ -38,6 +38,9 @@ dates above come from each run's `ledger.json`.
   `bookingRef`. In run 3 it got the error, asked the caller to confirm the code, sent `bookingCode`
   again, got the error again, and then used `bookingRef`. The schema already declares only
   `bookingRef`; a different argument name might avoid the drift, but it was not changed here.
+  **After these runs** the argument and result field were renamed to `bookingCode`, the word the
+  prompt and tool descriptions already used; a test replays the recorded `{bookingCode}` call.
+  The recordings and ledgers above are kept as they were; no live call has run since the rename.
 - **A repeated deposit request made no second payment link.** In run 2 the model called
   `send_deposit_link` twice for the same booking; there is one Checkout Session (`cs_test_0001`).
 - One booking per run, left `held`: the fake Stripe link is never paid.

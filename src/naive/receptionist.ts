@@ -34,28 +34,28 @@ export function createNaiveReceptionist(opts: ReceptionistOptions): Receptionist
         if (taken) return { status: 'slot_taken', slot: args.slot };
         const ref = `BK-${randomUUID().slice(0, 6).toUpperCase()}`;
         db.prepare(`insert into bookings values (?, ?, ?, ?, ?, 'booked', ?)`).run(ref, call.id, phone, args.name, args.slot, now().toISOString());
-        return { status: 'booked', bookingRef: ref, slot: args.slot, name: args.name };
+        return { status: 'booked', bookingCode: ref, slot: args.slot, name: args.name };
       }
       case 'reschedule_appointment':
-        db.prepare('update bookings set slot = ? where ref = ?').run(args.newSlot, args.bookingRef);
-        return { status: 'rescheduled', bookingRef: args.bookingRef, slot: args.newSlot };
+        db.prepare('update bookings set slot = ? where ref = ?').run(args.newSlot, args.bookingCode);
+        return { status: 'rescheduled', bookingCode: args.bookingCode, slot: args.newSlot };
       case 'cancel_appointment':
-        db.prepare(`update bookings set status = 'cancelled' where ref = ?`).run(args.bookingRef);
-        return { status: 'cancelled', bookingRef: args.bookingRef };
+        db.prepare(`update bookings set status = 'cancelled' where ref = ?`).run(args.bookingCode);
+        return { status: 'cancelled', bookingCode: args.bookingCode };
       case 'send_deposit_link': {
         const s = await opts.stripe.createDepositSession(
-          { bookingRef: args.bookingRef, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
+          { bookingCode: args.bookingCode, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
           randomUUID(), // a fresh key per request: the same as sending none
         );
-        db.prepare('insert into deposits values (?, ?, ?)').run(args.bookingRef, s.id, s.url);
-        return { status: 'link_sent', bookingRef: args.bookingRef, url: s.url };
+        db.prepare('insert into deposits values (?, ?, ?)').run(args.bookingCode, s.id, s.url);
+        return { status: 'link_sent', bookingCode: args.bookingCode, url: s.url };
       }
       case 'check_deposit': {
-        const d = db.prepare('select session_id from deposits where booking_ref = ? order by rowid desc').get(args.bookingRef) as
+        const d = db.prepare('select session_id from deposits where booking_ref = ? order by rowid desc').get(args.bookingCode) as
           | { session_id: string }
           | undefined;
         if (!d) return { status: 'no_link' };
-        return { status: (await opts.stripe.getSession(d.session_id)).payment_status, bookingRef: args.bookingRef };
+        return { status: (await opts.stripe.getSession(d.session_id)).payment_status, bookingCode: args.bookingCode };
       }
       case 'take_message':
         db.prepare('insert into messages values (?, ?, ?, ?, ?)').run(call.id, args.name, phone, args.reason, now().toISOString());

@@ -18,10 +18,10 @@ const str = (description: string) => ({ type: 'string', description });
 const TOOLS = [
   ['check_availability', 'List the free appointment slots on a date.', { date: str('YYYY-MM-DD') }, ['date']],
   ['book_appointment', 'Book a slot and hold it for the deposit.', { slot: str('YYYY-MM-DDTHH:MM, clinic time'), name: str("The patient's full name"), phone: str('Optional callback number') }, ['slot', 'name']],
-  ['reschedule_appointment', 'Move an existing booking.', { bookingRef: str('The booking code, e.g. BK-7Q2M9X'), newSlot: str('YYYY-MM-DDTHH:MM') }, ['bookingRef', 'newSlot']],
-  ['cancel_appointment', 'Cancel a booking.', { bookingRef: str('The booking code') }, ['bookingRef']],
-  ['send_deposit_link', 'Create the deposit payment link for a held booking.', { bookingRef: str('The booking code') }, ['bookingRef']],
-  ['check_deposit', 'Check whether the deposit was paid.', { bookingRef: str('The booking code') }, ['bookingRef']],
+  ['reschedule_appointment', 'Move an existing booking.', { bookingCode: str('The booking code, e.g. BK-7Q2M9X'), newSlot: str('YYYY-MM-DDTHH:MM') }, ['bookingCode', 'newSlot']],
+  ['cancel_appointment', 'Cancel a booking.', { bookingCode: str('The booking code') }, ['bookingCode']],
+  ['send_deposit_link', 'Create the deposit payment link for a held booking.', { bookingCode: str('The booking code') }, ['bookingCode']],
+  ['check_deposit', 'Check whether the deposit was paid.', { bookingCode: str('The booking code') }, ['bookingCode']],
   ['take_message', 'Take a message for the front desk.', { name: str('Caller name'), reason: str('What the call is about'), phone: str('Optional callback number') }, ['name', 'reason']],
   ['lookup_faq', 'Answer a common question. Topics: hours, insurance, parking.', { topic: str('hours, insurance or parking') }, ['topic']],
 ] as const;

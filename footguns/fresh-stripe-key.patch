@@ -3,8 +3,8 @@ index 05f4e02..b02dc1b 100644
 --- a/src/honest/receptionist.ts
 +++ b/src/honest/receptionist.ts
 @@ -324,7 +324,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
-     if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
-     if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingRef: b.ref } };
+     if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingCode: ref } };
+     if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingCode: b.ref } };
  
 -    const key = `deposit-${b.ref}`;
 +    const key = `deposit-${b.ref}-${randomInt(1e9)}`;

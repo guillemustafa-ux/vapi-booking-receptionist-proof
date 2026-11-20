@@ -30,19 +30,19 @@ describe('duplicates', () => {
   });
 
   it('S4: a redelivered send_deposit_link does not call Stripe again', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref }, { id: 'tc-dep' });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref }, { id: 'tc-dep' });
     const requests = rig.stripe.requests;
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref }, { id: 'tc-dep' });
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref }, { id: 'tc-dep' });
     assert.equal(rig.stripe.requests, requests);
     assert.equal(rig.stripe.created, 1);
   });
 
   it('S4: a late redelivery after the caller cancelled does not book again', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' })).result!.bookingRef;
-    await rig.tool('call-1', 'cancel_appointment', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' })).result!.bookingCode;
+    await rig.tool('call-1', 'cancel_appointment', { bookingCode: ref });
     const late = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' });
-    assert.equal(late.result!.bookingRef, ref);
+    assert.equal(late.result!.bookingCode, ref);
     assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'cancelled' }]);
   });
 
@@ -51,7 +51,7 @@ describe('duplicates', () => {
     const recall = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
     assert.notEqual(recall.toolCallId, first.toolCallId);
     assert.equal(recall.result!.status, 'booked');
-    assert.equal(recall.result!.bookingRef, first.result!.bookingRef);
+    assert.equal(recall.result!.bookingCode, first.result!.bookingCode);
     assert.equal(rows(rig, 'select * from bookings').length, 1);
   });
 
@@ -59,14 +59,14 @@ describe('duplicates', () => {
     const first = await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
     const other = await rig.tool('call-1', 'book_appointment', { slot: `${MONDAY}T11:00`, name: 'Ana Ruiz' });
     assert.equal(other.result!.status, 'already_booked');
-    assert.equal(other.result!.bookingRef, first.result!.bookingRef);
+    assert.equal(other.result!.bookingCode, first.result!.bookingCode);
     assert.equal(rows(rig, `select * from bookings where status in ('held','confirmed')`).length, 1);
   });
 
   it('S5: send_deposit_link re-called with new ids creates one Checkout Session and returns the same link', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    const a = await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
-    const b = await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    const a = await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
+    const b = await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     assert.equal(b.result!.url, a.result!.url);
     assert.equal(rig.stripe.created, 1);
   });
@@ -83,51 +83,51 @@ describe('duplicates', () => {
   it('S6: a reschedule onto a taken slot is refused and the booking stays where it was', async () => {
     await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
     const ben = (await rig.tool('call-2', 'book_appointment', { slot: `${MONDAY}T11:00`, name: 'Ben Cole' }, { caller: OTHER_CALLER })).result!;
-    const moved = await rig.tool('call-3', 'reschedule_appointment', { bookingRef: ben.bookingRef, newSlot: SLOT }, { caller: OTHER_CALLER });
+    const moved = await rig.tool('call-3', 'reschedule_appointment', { bookingCode: ben.bookingCode, newSlot: SLOT }, { caller: OTHER_CALLER });
     assert.equal(moved.result!.status, 'slot_taken');
-    assert.deepEqual(rows(rig, 'select slot from bookings where ref = ?', ben.bookingRef), [{ slot: `${MONDAY}T11:00` }]);
+    assert.deepEqual(rows(rig, 'select slot from bookings where ref = ?', ben.bookingCode), [{ slot: `${MONDAY}T11:00` }]);
   });
 
   it('only the caller who booked can move or cancel it', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    const cancel = await rig.tool('call-2', 'cancel_appointment', { bookingRef: ref }, { caller: OTHER_CALLER });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    const cancel = await rig.tool('call-2', 'cancel_appointment', { bookingCode: ref }, { caller: OTHER_CALLER });
     assert.equal(cancel.result!.status, 'not_found');
     assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'held' }]);
   });
 
   it('a phone number said on another line is not proof of ownership', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    const spoof = await rig.tool('call-2', 'cancel_appointment', { bookingRef: ref, phone: '+15555550123' }, { caller: OTHER_CALLER });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    const spoof = await rig.tool('call-2', 'cancel_appointment', { bookingCode: ref, phone: '+15555550123' }, { caller: OTHER_CALLER });
     assert.equal(spoof.result!.status, 'not_found');
     assert.deepEqual(rows(rig, 'select status from bookings'), [{ status: 'held' }]);
   });
 
   it('S7: a lost Stripe answer is retried with the same key: the session is replayed, not created again', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
     rig.stripe.failNext('drop');
-    const lost = await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const lost = await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     assert.match(lost.error!, /did not confirm/);
     assert.equal(rig.stripe.created, 1);
     assert.deepEqual(rows(rig, 'select status, session_id from deposits'), [{ status: 'unknown', session_id: null }]);
 
-    const retry = await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const retry = await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     assert.equal(retry.result!.status, 'link_sent');
     assert.equal(rig.stripe.created, 1);
     assert.deepEqual(rows(rig, 'select status, session_id from deposits'), [{ status: 'open', session_id: 'cs_test_0001' }]);
   });
 
   it('S7: a Stripe 500 is replayed for the same key: no second session, the deposit is left for the front desk', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
     rig.stripe.failNext('500');
-    assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).error);
-    assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).error);
+    assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref })).error);
+    assert.ok((await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref })).error);
     assert.equal(rig.stripe.created, 0);
     assert.deepEqual(rows(rig, 'select status, session_id from deposits'), [{ status: 'unknown', session_id: null }]);
   });
 
   it('S7: a deposit paid after the hold ran out confirms the booking instead of releasing the slot', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     rig.stripe.pay(rig.stripe.sessionIds()[0]!); // paid, but nobody asked before the hold ran out
     rig.advanceMinutes(20);
 
@@ -137,8 +137,8 @@ describe('duplicates', () => {
   });
 
   it('S7: with Stripe unreachable when the hold runs out, the hold stays until Stripe can be asked', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     rig.advanceMinutes(20);
     rig.stripe.goDark();
     const blocked = await rig.tool('call-2', 'book_appointment', { slot: SLOT, name: 'Ben Cole' }, { caller: OTHER_CALLER });

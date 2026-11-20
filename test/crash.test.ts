@@ -57,7 +57,7 @@ describe('crash (S8)', () => {
       const recall = await tool(restarted.url, 'tc-2', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
       assert.equal(recall.result!.status, 'booked');
       const redelivered = await tool(restarted.url, 'tc-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' });
-      assert.equal(redelivered.result!.bookingRef, recall.result!.bookingRef);
+      assert.equal(redelivered.result!.bookingCode, recall.result!.bookingCode);
       assert.equal(count('select count(*) as n from bookings'), 1);
     } finally {
       await restarted.stop();
@@ -66,8 +66,8 @@ describe('crash (S8)', () => {
 
   it('killed after Stripe created the session, before the local write: the retry replays it', async () => {
     const dying = await startReceiverProcess({ dbPath, stripeUrl: stripe.url, now: FRIDAY_10AM, fault: 'after_stripe' });
-    const ref = (await tool(dying.url, 'tc-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    await assert.rejects(tool(dying.url, 'tc-2', 'send_deposit_link', { bookingRef: ref }));
+    const ref = (await tool(dying.url, 'tc-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    await assert.rejects(tool(dying.url, 'tc-2', 'send_deposit_link', { bookingCode: ref }));
     const exit = await dying.exited;
     assert.equal(exit.crashedAt, 'after_stripe');
     assert.equal(stripe.created, 1);
@@ -75,7 +75,7 @@ describe('crash (S8)', () => {
 
     const restarted = await startReceiverProcess({ dbPath, stripeUrl: stripe.url, now: FRIDAY_10AM });
     try {
-      const retry = await tool(restarted.url, 'tc-3', 'send_deposit_link', { bookingRef: ref });
+      const retry = await tool(restarted.url, 'tc-3', 'send_deposit_link', { bookingCode: ref });
       assert.equal(retry.result!.status, 'link_sent');
       assert.equal(stripe.created, 1); // replayed by the Idempotency-Key, not created again
       assert.equal(count(`select count(*) as n from deposits where status = 'open' and session_id = 'cs_test_0001'`), 1);

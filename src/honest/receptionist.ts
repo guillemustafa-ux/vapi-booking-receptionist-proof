@@ -177,7 +177,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   function bookingResult(b: BookingRow, status: string): Record<string, unknown> {
     return {
       status,
-      bookingRef: b.ref,
+      bookingCode: b.ref,
       slot: b.slot,
       name: b.name,
       bookingStatus: b.status,
@@ -227,10 +227,10 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   }
 
   function reschedule(call: VapiCall, args: Record<string, unknown>): Outcome {
-    const ref = str(args, 'bookingRef')!;
+    const ref = str(args, 'bookingCode')!;
     const newSlot = str(args, 'newSlot')!;
     const b = ownedBooking(ref, call);
-    if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
+    if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingCode: ref } };
     if (b.slot === newSlot) return { result: bookingResult(b, 'unchanged') };
     const check = checkSlot(clinic, newSlot, now());
     if (check !== 'ok') return { result: { status: check, slot: newSlot } };
@@ -250,11 +250,11 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
    * If Stripe cannot be asked, nothing is cancelled and the caller is asked to try again.
    */
   async function cancel(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
-    const ref = str(args, 'bookingRef')!;
+    const ref = str(args, 'bookingCode')!;
     const b = ownedBooking(ref, call);
-    if (!b) return { result: { status: 'not_found', bookingRef: ref } };
-    if (b.status === 'cancelled') return { result: { status: 'already_cancelled', bookingRef: b.ref } };
-    if (b.status === 'expired') return { result: { status: 'already_released', bookingRef: b.ref } };
+    if (!b) return { result: { status: 'not_found', bookingCode: ref } };
+    if (b.status === 'cancelled') return { result: { status: 'already_cancelled', bookingCode: b.ref } };
+    if (b.status === 'expired') return { result: { status: 'already_released', bookingCode: b.ref } };
     // A deposit link still being created would come back payable after the cancel.
     if (inFlight.has(b.ref)) return { error: 'The deposit link is still being created, so the booking was not cancelled. Offer to try again in a moment.' };
     const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
@@ -268,7 +268,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
       } else setDeposit(b.ref, 'expired');
     }
     db.prepare(`update bookings set status = 'cancelled', hold_expires_at = null, updated_at = ? where ref = ?`).run(iso(), b.ref);
-    return { result: { status: 'cancelled', bookingRef: b.ref, slot: b.slot, ...(paid ? { depositRefund: 'handled by the front desk' } : {}) } };
+    return { result: { status: 'cancelled', bookingCode: b.ref, slot: b.slot, ...(paid ? { depositRefund: 'handled by the front desk' } : {}) } };
   }
 
   function takeMessage(call: VapiCall, args: Record<string, unknown>): Outcome {
@@ -329,10 +329,10 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   });
 
   async function sendDepositLink(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
-    const ref = str(args, 'bookingRef')!;
+    const ref = str(args, 'bookingCode')!;
     const b = ownedBooking(ref, call);
-    if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingRef: ref } };
-    if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingRef: b.ref } };
+    if (!b || (b.status !== 'held' && b.status !== 'confirmed')) return { result: { status: 'not_found', bookingCode: ref } };
+    if (b.status === 'confirmed') return { result: { status: 'already_paid', bookingCode: b.ref } };
 
     const key = `deposit-${b.ref}`;
     const t = iso();
@@ -341,8 +341,8 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
        on conflict (booking_ref) do nothing`,
     ).run(b.ref, key, t, t);
     const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow;
-    if (dep.status === 'open' || dep.status === 'paid') return { result: { status: 'link_sent', bookingRef: b.ref, url: dep.url } };
-    if (inFlight.has(b.ref)) return { result: { status: 'pending', bookingRef: b.ref } };
+    if (dep.status === 'open' || dep.status === 'paid') return { result: { status: 'link_sent', bookingCode: b.ref, url: dep.url } };
+    if (inFlight.has(b.ref)) return { result: { status: 'pending', bookingCode: b.ref } };
     if (dep.status === 'unknown' && now().getTime() - Date.parse(dep.created_at) > KEY_SAFE_RETRY_MS) {
       // Stripe may have pruned the key: a retry could create a second session. A person decides.
       return { error: 'The deposit link needs the front desk to check it. Offer to transfer or take a message.' };
@@ -353,7 +353,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
     try {
       db.prepare(`update deposits set status = 'creating', error = null, updated_at = ? where booking_ref = ?`).run(iso(), b.ref);
       const session = await opts.stripe.createDepositSession(
-        { bookingRef: b.ref, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
+        { bookingCode: b.ref, amountCents: clinic.depositCents, currency: clinic.currency, successUrl: clinic.depositSuccessUrl },
         key,
       );
       crashIfAt(opts.fault, 'after_stripe');
@@ -363,7 +363,7 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
         iso(),
         b.ref,
       );
-      return { result: { status: 'link_sent', bookingRef: b.ref, url: session.url } };
+      return { result: { status: 'link_sent', bookingCode: b.ref, url: session.url } };
     } catch (err) {
       if (!(err instanceof StripeError)) throw err;
       db.prepare(`update deposits set status = ?, error = ?, updated_at = ? where booking_ref = ?`).run(
@@ -379,13 +379,13 @@ export function createHonestReceptionist(opts: ReceptionistOptions): Receptionis
   }
 
   async function checkDeposit(call: VapiCall, args: Record<string, unknown>): Promise<Outcome> {
-    const ref = str(args, 'bookingRef')!;
+    const ref = str(args, 'bookingCode')!;
     const b = ownedBooking(ref, call);
-    if (!b) return { result: { status: 'not_found', bookingRef: ref } };
+    if (!b) return { result: { status: 'not_found', bookingCode: ref } };
     if (b.status === 'confirmed') return { result: bookingResult(b, 'paid') };
-    if (b.status !== 'held') return { result: { status: b.status === 'expired' ? 'hold_expired' : 'cancelled', bookingRef: b.ref } };
+    if (b.status !== 'held') return { result: { status: b.status === 'expired' ? 'hold_expired' : 'cancelled', bookingCode: b.ref } };
     const dep = db.prepare('select * from deposits where booking_ref = ?').get(b.ref) as DepositRow | undefined;
-    if (!dep?.session_id) return { result: { status: 'no_link', bookingRef: b.ref } };
+    if (!dep?.session_id) return { result: { status: 'no_link', bookingCode: b.ref } };
     try {
       const session = await opts.stripe.getSession(dep.session_id);
       if (session.payment_status === 'paid') {

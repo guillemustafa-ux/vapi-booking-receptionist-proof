@@ -66,10 +66,10 @@ not book.
 | --- | --- | --- |
 | `check_availability` | `date` (YYYY-MM-DD) | free slots |
 | `book_appointment` | `slot`, `name`, `phone`? (callback) | `booked`, `already_booked`, `slot_taken`, `no_caller_id`, `outside_hours`, `in_the_past`, `invalid_slot` |
-| `reschedule_appointment` | `bookingRef`, `newSlot` | `rescheduled`, `unchanged`, `slot_taken`, `not_found`, `outside_hours`, `in_the_past`, `invalid_slot` |
-| `cancel_appointment` | `bookingRef` | `cancelled`, `already_cancelled`, `already_released`, `not_found`; an `error` if Stripe cannot be asked |
-| `send_deposit_link` | `bookingRef` | `link_sent`, `already_paid`, `pending`, `not_found` |
-| `check_deposit` | `bookingRef` | `paid`, `unpaid`, `hold_expired`, `cancelled`, `no_link`, `not_found` |
+| `reschedule_appointment` | `bookingCode`, `newSlot` | `rescheduled`, `unchanged`, `slot_taken`, `not_found`, `outside_hours`, `in_the_past`, `invalid_slot` |
+| `cancel_appointment` | `bookingCode` | `cancelled`, `already_cancelled`, `already_released`, `not_found`; an `error` if Stripe cannot be asked |
+| `send_deposit_link` | `bookingCode` | `link_sent`, `already_paid`, `pending`, `not_found` |
+| `check_deposit` | `bookingCode` | `paid`, `unpaid`, `hold_expired`, `cancelled`, `no_link`, `not_found` |
 | `take_message` | `name`, `reason`, `phone`? | `message_taken` (one per call; a second one is not stored) |
 | `lookup_faq` | `topic` | the answer, or `unknown_topic` |
 

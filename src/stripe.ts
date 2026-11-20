@@ -26,7 +26,7 @@ export class StripeError extends Error {
 
 export interface StripeClient {
   createDepositSession(
-    p: { bookingRef: string; amountCents: number; currency: string; successUrl: string },
+    p: { bookingCode: string; amountCents: number; currency: string; successUrl: string },
     idempotencyKey: string,
   ): Promise<CheckoutSession>;
   getSession(id: string, timeoutMs?: number): Promise<CheckoutSession>;
@@ -68,7 +68,7 @@ export function createStripeClient(opts: { baseUrl: string; secretKey: string })
           'line_items[0][price_data][currency]': p.currency,
           'line_items[0][price_data][unit_amount]': String(p.amountCents),
           'line_items[0][price_data][product_data][name]': 'Appointment deposit',
-          'metadata[booking_ref]': p.bookingRef,
+          'metadata[booking_ref]': p.bookingCode,
         }).toString(),
       }),
     getSession: (id, timeoutMs) => call(`/v1/checkout/sessions/${encodeURIComponent(id)}`, { method: 'GET' }, timeoutMs),

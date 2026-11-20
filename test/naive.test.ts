@@ -17,24 +17,24 @@ describe('naive side: what the guards prevent', () => {
   afterEach(() => rig.close());
 
   it('naive: the model re-calling send_deposit_link creates a second Checkout Session', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     assert.equal(rig.stripe.created, 2);
   });
 
   it('naive: a late redelivery after the caller cancelled books the slot again', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' })).result!.bookingRef;
-    await rig.tool('call-1', 'cancel_appointment', { bookingRef: ref });
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' })).result!.bookingCode;
+    await rig.tool('call-1', 'cancel_appointment', { bookingCode: ref });
     await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' }, { id: 'tc-book' });
     assert.deepEqual(rows(rig, 'select status from bookings order by rowid'), [{ status: 'cancelled' }, { status: 'booked' }]);
   });
 
   it('naive: a retry after a lost Stripe answer creates a second Checkout Session', async () => {
-    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingRef;
+    const ref = (await rig.tool('call-1', 'book_appointment', { slot: SLOT, name: 'Ana Ruiz' })).result!.bookingCode;
     rig.stripe.failNext('drop');
-    assert.equal((await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref })).status, 500);
-    await rig.tool('call-1', 'send_deposit_link', { bookingRef: ref });
+    assert.equal((await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref })).status, 500);
+    await rig.tool('call-1', 'send_deposit_link', { bookingCode: ref });
     assert.equal(rig.stripe.created, 2);
   });
 });
