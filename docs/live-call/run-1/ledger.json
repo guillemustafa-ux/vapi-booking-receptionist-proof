@@ -1,0 +1,61 @@
+{
+  "tool_calls": [
+    {
+      "tool_call_id": "check-8c18c648-8b34-4d38-9b6b-3eca9d75df3a",
+      "name": "lookup_faq",
+      "args_json": "{\"topic\":\"hours\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"topic\":\"hours\",\"answer\":\"We are open Monday to Friday, 9 am to 5 pm.\"}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_YiAk4cDefnq4hOmhe9TUNSQF",
+      "name": "check_availability",
+      "args_json": "{\"date\":\"2026-11-23\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"date\":\"2026-11-23\",\"free\":[\"2026-11-23T09:00\",\"2026-11-23T09:30\",\"2026-11-23T10:00\",\"2026-11-23T10:30\",\"2026-11-23T11:00\",\"2026-11-23T11:30\",\"2026-11-23T12:00\",\"2026-11-23T12:30\",\"2026-11-23T13:00\",\"2026-11-23T13:30\",\"2026-11-23T14:00\",\"2026-11-23T14:30\",\"2026-11-23T15:00\",\"2026-11-23T15:30\",\"2026-11-23T16:00\",\"2026-11-23T16:30\"]}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_Qsh0nUUWwFgtGVIenHInduAS",
+      "name": "book_appointment",
+      "args_json": "{\"name\":\"Anna Ruiz\",\"slot\":\"2026-11-23T10:00\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"status\":\"booked\",\"bookingRef\":\"BK-C52WUH\",\"slot\":\"2026-11-23T10:00\",\"name\":\"Anna Ruiz\",\"bookingStatus\":\"held\",\"depositCents\":5000,\"holdExpiresAt\":\"2026-11-20T03:20:45.856Z\"}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_RpsPDuru8TDh6IN5xVfIV5mL",
+      "name": "send_deposit_link",
+      "args_json": "{\"bookingCode\":\"BK-C52WUH\"}",
+      "status": "done",
+      "outcome_json": "{\"error\":\"invalid arguments: bookingRef is required\"}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_Ntt9cMz4HoeZrxOovt3108kQ",
+      "name": "send_deposit_link",
+      "args_json": "{\"bookingRef\":\"BK-C52WUH\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"status\":\"link_sent\",\"bookingRef\":\"BK-C52WUH\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}}",
+      "deliveries": 1
+    }
+  ],
+  "bookings": [
+    {
+      "ref": "BK-C52WUH",
+      "slot": "2026-11-23T10:00",
+      "name": "Anna Ruiz",
+      "status": "held",
+      "phone": "+15555550142",
+      "callback_phone": "+15555550142"
+    }
+  ],
+  "deposits": [
+    {
+      "booking_ref": "BK-C52WUH",
+      "status": "open",
+      "session_id": "cs_test_0001"
+    }
+  ]
+}

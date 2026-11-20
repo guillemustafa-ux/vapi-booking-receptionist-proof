@@ -8,7 +8,9 @@ receiver is killed mid-request.
 
 Tested offline: a fake Vapi that signs requests the way Vapi's HMAC credential does, a fake Stripe
 with Stripe's documented idempotency and session-expiry behaviour, and a receiver process killed
-with `SIGKILL`. No Vapi account, no phone call and no real Stripe were used (see [Limits](#limits)).
+with `SIGKILL`; no Vapi account and no real Stripe. Then [three recorded Vapi voice calls](docs/live-call/)
+ran this receiver for real through a tunnel, with Vapi's AI tester as the caller and the fake Stripe
+(see [Limits](#limits)).
 
 | The ask | Where it is covered |
 | --- | --- |
@@ -82,7 +84,7 @@ Node 22.14 or later (the `better-sqlite3` 13 prebuilt binary needs N-API 10; on 
 
 ```sh
 npm ci
-npm test            # 54 tests with node:test; all but one go through HTTP
+npm test            # 55 tests with node:test; all but one go through HTTP
 npm run typecheck
 npm run footguns    # each footgun must make exactly its documented tests fail
 ```
@@ -111,9 +113,11 @@ calls: it creates two Checkout Sessions for one deposit and books a cancelled sl
 
 ## Limits
 
-- **No real Vapi call yet.** Vapi's side is a fake built from its documentation; no assistant,
-  phone number or recording is part of this repo. `assistant-request` and
-  `knowledge-base-request` are answered with `{}`.
+- **The live calls are simulations, not phone calls.** The tests use a fake Vapi built from its
+  documentation. The [three live runs](docs/live-call/) are real Vapi voice calls, but the caller
+  is Vapi's AI tester over its websocket transport: no phone number and no human. Those calls carry
+  no caller ID, so the runs set `demoCallerId`. `assistant-request` and `knowledge-base-request`
+  are answered with `{}`.
 - **No real Stripe.** The fake implements the documented idempotency and expiry rules, not
   Checkout itself; the success URL is a placeholder. Payment is checked by `check_deposit`, on
   release and on cancel; Stripe webhooks are not used. There is no refund flow.

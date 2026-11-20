@@ -11,6 +11,9 @@
 - `cloudflared` on the PATH (a Cloudflare quick tunnel, no account).
 - No Stripe account: deposits go to the fake Stripe from the tests, and the summary says so.
 
+The three runs of 2026-11-20, with what each one surfaced, are in
+[`docs/live-call/`](../docs/live-call/).
+
 ## Run
 
 ```sh

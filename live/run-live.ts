@@ -109,11 +109,31 @@ async function checkThroughTunnel(url: string, secret: string): Promise<void> {
   }
 }
 
+// Shapes per docs.vapi.ai as of 2026-11-19: the run item carries `callId` (older payloads used
+// `calls.targetCallId`) and `metadata.call` with the recording and transcript.
 interface RunItem {
   status?: string;
+  callId?: string;
   calls?: { targetCallId?: string; testerCallId?: string };
+  metadata?: { call?: { recordingUrl?: string; transcript?: string } };
   [k: string]: unknown;
 }
+
+/** Drops what must not be committed: presigned (signed, time-limited) URLs, log URLs and the org id. */
+function redact(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(redact);
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([k, v]) => !/presigned|logUrl|orgId/i.test(k) && !(typeof v === 'string' && v.includes('X-Amz-')))
+        .map(([k, v]) => [k, redact(v)]),
+    );
+  }
+  return value;
+}
+
+/** List endpoints answer either a bare array or `{ results: [...] }`. */
+const listOf = <T>(raw: T[] | { results?: T[] }): T[] => (Array.isArray(raw) ? raw : (raw.results ?? []));
 
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
@@ -148,18 +168,23 @@ async function main(): Promise<void> {
     const assistant = await vapi<{ id: string }>('POST', '/assistant', assistantBody(`${tunnel.url}${PATH}`, credential.id, day));
     log(`assistant ${assistant.id}`);
 
-    const personalities = DRY ? [{ id: 'dry-personality', name: 'dry' }] : await vapi<{ id: string; name?: string }[]>('GET', '/eval/simulation/personality');
+    type Personality = { id: string; name?: string };
+    const personalities = DRY ? [{ id: 'dry-personality', name: 'dry' }] : listOf(await vapi<Personality[] | { results?: Personality[] }>('GET', '/eval/simulation/personality'));
     const personality = personalities.find((p) => /default|normal|neutral|polite|friendly/i.test(p.name ?? '')) ?? personalities[0];
     if (!personality) throw new Error('no simulation personality available');
     const scenario = await vapi<{ id: string }>('POST', '/eval/simulation/scenario', scenarioBody(day));
     const simulation = await vapi<{ id: string }>('POST', '/eval/simulation', { scenarioId: scenario.id, personalityId: personality.id, name: 'Book, deposit, insurance' });
     const suite = await vapi<{ id: string }>('POST', '/eval/simulation/suite', { name: 'vapi-booking-receptionist-proof', simulationIds: [simulation.id] });
-    const run = await vapi<{ id: string }>(
+    const created = await vapi<{ id?: string; runId?: string }>(
       'POST',
       '/eval/simulation/run',
       { simulations: [{ type: 'simulationSuite', simulationSuiteId: suite.id }], target: { type: 'assistant', assistantId: assistant.id }, transport: { provider: 'vapi.websocket' }, iterations: 1 },
       { 'idempotency-key': `proof-live-${randomUUID()}` },
     );
+    // The API reference returns the run object (`id`); the simulations guide shows `{ runId }`.
+    const runId = created.id ?? created.runId;
+    if (!runId) throw new Error(`no run id in the create-run answer: ${JSON.stringify(created).slice(0, 500)}`);
+    const run = { id: runId };
     log(`simulation run ${run.id} (voice)`);
 
     if (DRY) {
@@ -175,25 +200,26 @@ async function main(): Promise<void> {
       await new Promise((r) => setTimeout(r, 10_000));
     }
     if (status !== 'ended') throw new Error(`simulation run still ${status} after 8 minutes`);
-    const itemsRaw = await vapi<RunItem[] | { results?: RunItem[] }>('GET', `/eval/simulation/run/${run.id}/item`);
-    const items = Array.isArray(itemsRaw) ? itemsRaw : (itemsRaw.results ?? []);
-    writeFileSync(join(OUT, 'run-items.json'), JSON.stringify(items, null, 2));
-    const targetCallId = items[0]?.calls?.targetCallId;
-    if (!targetCallId) throw new Error('no targetCallId in the run items; see docs/live-call/run-items.json');
+    const items = listOf(await vapi<RunItem[] | { results?: RunItem[] }>('GET', `/eval/simulation/run/${run.id}/item`));
+    writeFileSync(join(OUT, 'run-items.json'), JSON.stringify(redact(items), null, 2));
+    const item = items[0];
+    const targetCallId = item?.callId ?? item?.calls?.targetCallId;
+    if (!targetCallId) throw new Error('no callId in the run items; see docs/live-call/run-items.json');
 
-    const call = await vapi<{ artifact?: { recordingUrl?: string; recording?: { mono?: { combinedUrl?: string } }; transcript?: string; messages?: unknown[] } }>(
+    // recordingUrl points at a private bucket (it answers an `InvalidArgument: Authorization` XML error); presignedMonoUrl is the downloadable one, valid ~30 min.
+    const call = await vapi<{ artifact?: { presignedMonoUrl?: string; recordingUrl?: string; recording?: { mono?: { combinedUrl?: string } }; transcript?: string; messages?: unknown[] } }>(
       'GET',
       `/call/${targetCallId}`,
     );
-    writeFileSync(join(OUT, 'call.json'), JSON.stringify(call, null, 2));
-    const recordingUrl = call.artifact?.recordingUrl ?? call.artifact?.recording?.mono?.combinedUrl;
-    if (recordingUrl) {
-      const audio = await fetch(recordingUrl);
+    writeFileSync(join(OUT, 'call.json'), JSON.stringify(redact(call), null, 2));
+    const recordingUrl = call.artifact?.presignedMonoUrl ?? call.artifact?.recordingUrl ?? call.artifact?.recording?.mono?.combinedUrl ?? item?.metadata?.call?.recordingUrl;
+    const audio = recordingUrl ? await fetch(recordingUrl) : undefined;
+    if (audio?.ok) {
       const ext = (audio.headers.get('content-type') ?? '').includes('wav') ? 'wav' : 'mp3';
       writeFileSync(join(OUT, `recording.${ext}`), Buffer.from(await audio.arrayBuffer()));
       log(`recording saved: docs/live-call/recording.${ext}`);
-    } else log('no recording URL on the call artifact');
-    writeFileSync(join(OUT, 'transcript.md'), `# Transcript (call ${targetCallId})\n\n${call.artifact?.transcript ?? '(none)'}\n`);
+    } else log(`recording not saved: ${audio ? `HTTP ${audio.status}` : 'no recording URL on the call artifact'}`);
+    writeFileSync(join(OUT, 'transcript.md'), `# Transcript (call ${targetCallId})\n\n${call.artifact?.transcript ?? item?.metadata?.call?.transcript ?? '(none)'}\n`);
 
     const db = new Database(dbPath, { readonly: true });
     const ledger = {
@@ -205,7 +231,7 @@ async function main(): Promise<void> {
     writeFileSync(join(OUT, 'ledger.json'), JSON.stringify(ledger, null, 2));
     writeFileSync(
       join(OUT, 'summary.md'),
-      `# Live call summary\n\n- Vapi call: \`${targetCallId}\`\n- Simulation run: \`${run.id}\` (voice, Vapi's AI tester as the caller)\n- Tool calls received by the receiver through the tunnel, HMAC-verified: ${ledger.tool_calls.length}\n- Bookings: ${JSON.stringify(ledger.bookings)}\n- Deposits (fake Stripe): ${JSON.stringify(ledger.deposits)}\n`,
+      `# Live call summary\n\n- Vapi call: \`${targetCallId}\`\n- Simulation run: \`${run.id}\` (voice, Vapi's AI tester as the caller)\n- Tool calls received by the receiver through the tunnel, HMAC-verified: ${ledger.tool_calls.length} (the first is the harness's own tunnel check)\n- Bookings: ${JSON.stringify(ledger.bookings)}\n- Deposits (fake Stripe): ${JSON.stringify(ledger.deposits)}\n`,
     );
     log(`done: ${ledger.tool_calls.length} tool calls, ${ledger.bookings.length} booking(s)`);
   } finally {

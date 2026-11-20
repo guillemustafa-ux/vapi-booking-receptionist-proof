@@ -1,0 +1,2132 @@
+{
+  "id": "01a1f6f2-d890-7332-b1ca-570ec2e670ae",
+  "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+  "type": "vapi.websocketCall",
+  "startedAt": "2026-11-20T03:14:32.929Z",
+  "endedAt": "2026-11-20T03:15:38.646Z",
+  "transcript": "AI: Thanks for calling Bright Smile Dental. This is the scheduling assistant. Can I help you today?\nUser: Hi. I'd like to book a teeth cleaning appointment on November 20 third, 20 26 at 10 AM, please.\nAI: Just a sec.\nAI: The 10 AM\nUser: Of course. Take your time.\nAI: Could I please have your full name for the booking?\nUser: Yes. It's Anna Ruiz.\nAI: Just a sec.\nAI: Just a sec.\nUser: I'll wait.\nAI: Your appointment for Anna Ruiz at 10 AM on November twentieth 2026 is held with booking code b k a g q t f w. I will now send you the deposit payment link. To confirm. This will just take a sec.\nUser: Thank you. Could you please send me the deposit link? Also, do you accept Delta Dental insurance?\nAI: Hold on a sec. The\nUser: Sure. I'll wait.\nAI: we do accept Delta Dental insurance. Please bring your card, uh, to\nUser: Great.\nAI: Is there anything else I can help you with today?\nUser: No. That's everything.\nAI: Goodbye.\n",
+  "recordingUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-a37d4464-20d4-44ca-bf49-22341d0143e0-mono.wav",
+  "summary": "",
+  "createdAt": "2026-11-20T03:14:32.720Z",
+  "updatedAt": "2026-11-20T03:15:42.556Z",
+  "cost": 0.1295,
+  "status": "ended",
+  "endedReason": "assistant-ended-call",
+  "messages": [
+    {
+      "role": "system",
+      "time": 1795144472789,
+      "message": "You are the phone receptionist of Bright Smile Dental. Be brief and warm; one question at a time. Opening hours: Monday to Friday, 9 am to 5 pm, clinic time. Slots are 30 minutes. A suitable day to offer is 2026-11-23. To book: ask for the full name and the preferred time, call check_availability for the day, then book_appointment with slot as YYYY-MM-DDTHH:MM. A new booking is held for 15 minutes until a 50 dollar deposit is paid: offer send_deposit_link right after booking and read back the booking code, never the URL. If book_appointment answers slot_taken, offer the alternatives it returns. If it answers no_caller_id, offer to take a message. Answer questions about hours, insurance or parking with lookup_faq. Never invent prices, insurance plans or availability. End the call only after the caller says goodbye or confirms they need nothing else. A thank-you alone is not a goodbye: if the caller goes on with another question, answer it first.",
+      "secondsFromStart": 0
+    },
+    {
+      "role": "bot",
+      "time": 1795144474233,
+      "source": "",
+      "endTime": 1795144479153,
+      "message": "Thanks for calling Bright Smile Dental. This is the scheduling assistant. Can I help you today?",
+      "duration": 3920.000244140625,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 1.304
+    },
+    {
+      "role": "user",
+      "time": 1795144480193,
+      "endTime": 1795144486043,
+      "message": "Hi. I'd like to book a teeth cleaning appointment on November 20 third, 20 26 at 10 AM, please.",
+      "duration": 5600,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 7.72,
+            "word": "hi",
+            "start": 7.24,
+            "confidence": 0.99902344,
+            "punctuated_word": "Hi."
+          },
+          {
+            "end": 7.96,
+            "word": "i'd",
+            "start": 7.72,
+            "confidence": 1,
+            "punctuated_word": "I'd"
+          },
+          {
+            "end": 8.04,
+            "word": "like",
+            "start": 7.96,
+            "confidence": 1,
+            "punctuated_word": "like"
+          },
+          {
+            "end": 8.12,
+            "word": "to",
+            "start": 8.04,
+            "confidence": 1,
+            "punctuated_word": "to"
+          },
+          {
+            "end": 8.36,
+            "word": "book",
+            "start": 8.12,
+            "confidence": 1,
+            "punctuated_word": "book"
+          },
+          {
+            "end": 8.44,
+            "word": "a",
+            "start": 8.36,
+            "confidence": 1,
+            "punctuated_word": "a"
+          },
+          {
+            "end": 8.68,
+            "word": "teeth",
+            "start": 8.44,
+            "confidence": 0.9951172,
+            "punctuated_word": "teeth"
+          },
+          {
+            "end": 9.08,
+            "word": "cleaning",
+            "start": 8.68,
+            "confidence": 1,
+            "punctuated_word": "cleaning"
+          },
+          {
+            "end": 9.48,
+            "word": "appointment",
+            "start": 9.08,
+            "confidence": 1,
+            "punctuated_word": "appointment"
+          },
+          {
+            "end": 9.719999,
+            "word": "on",
+            "start": 9.48,
+            "confidence": 1,
+            "punctuated_word": "on"
+          },
+          {
+            "end": 10.2,
+            "word": "november",
+            "start": 9.719999,
+            "confidence": 1,
+            "punctuated_word": "November"
+          },
+          {
+            "end": 10.52,
+            "word": "20",
+            "start": 10.2,
+            "confidence": 1,
+            "punctuated_word": "20"
+          },
+          {
+            "end": 10.76,
+            "word": "third",
+            "start": 10.52,
+            "confidence": 0.7416992,
+            "punctuated_word": "third,"
+          },
+          {
+            "end": 11.33,
+            "word": "20",
+            "start": 11.01,
+            "confidence": 0.9160156,
+            "punctuated_word": "20"
+          },
+          {
+            "end": 11.89,
+            "word": "26",
+            "start": 11.33,
+            "confidence": 0.9975586,
+            "punctuated_word": "26"
+          },
+          {
+            "end": 12.21,
+            "word": "at",
+            "start": 11.89,
+            "confidence": 0.99316406,
+            "punctuated_word": "at"
+          },
+          {
+            "end": 12.530001,
+            "word": "10",
+            "start": 12.21,
+            "confidence": 1,
+            "punctuated_word": "10"
+          },
+          {
+            "end": 12.93,
+            "word": "am",
+            "start": 12.530001,
+            "confidence": 0.99902344,
+            "punctuated_word": "AM,"
+          },
+          {
+            "end": 13.09,
+            "word": "please",
+            "start": 12.93,
+            "confidence": 1,
+            "punctuated_word": "please."
+          }
+        ]
+      },
+      "confidence": 0.99902344,
+      "confidenceSource": "derived",
+      "secondsFromStart": 7.24
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144486247,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_QHxSzcjfUjcKsbRvazsiaSZS",
+          "type": "function",
+          "function": {
+            "name": "check_availability",
+            "arguments": "{\"date\": \"2026-11-20\"}"
+          }
+        }
+      ],
+      "secondsFromStart": 13.318
+    },
+    {
+      "role": "bot",
+      "time": 1795144487253,
+      "source": "",
+      "endTime": 1795144487973,
+      "message": "Just a sec.",
+      "duration": 720,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 14.324
+    },
+    {
+      "name": "check_availability",
+      "role": "tool_call_result",
+      "time": 1795144487332,
+      "result": "{\"date\":\"2026-11-20\",\"free\":[\"2026-11-20T09:00\",\"2026-11-20T09:30\",\"2026-11-20T10:00\",\"2026-11-20T10:30\",\"2026-11-20T11:00\",\"2026-11-20T11:30\",\"2026-11-20T12:00\",\"2026-11-20T12:30\",\"2026-11-20T13:00\",\"2026-11-20T13:30\",\"2026-11-20T14:00\",\"2026-11-20T14:30\",\"2026-11-20T15:00\",\"2026-11-20T15:30\",\"2026-11-20T16:00\",\"2026-11-20T16:30\"]}",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_QHxSzcjfUjcKsbRvazsiaSZS",
+      "secondsFromStart": 14.403
+    },
+    {
+      "role": "bot",
+      "time": 1795144489273,
+      "source": "",
+      "endTime": 1795144489913,
+      "message": "The 10 AM",
+      "duration": 640,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 16.344
+    },
+    {
+      "role": "user",
+      "time": 1795144489473,
+      "endTime": 1795144490833,
+      "message": "Of course. Take your time.",
+      "duration": 1040,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 16.84,
+            "word": "of",
+            "start": 16.52,
+            "confidence": 0.99902344,
+            "punctuated_word": "Of"
+          },
+          {
+            "end": 17,
+            "word": "course",
+            "start": 16.84,
+            "confidence": 0.90893555,
+            "punctuated_word": "course."
+          },
+          {
+            "end": 17.56,
+            "word": "take",
+            "start": 17.32,
+            "confidence": 1,
+            "punctuated_word": "Take"
+          },
+          {
+            "end": 17.72,
+            "word": "your",
+            "start": 17.56,
+            "confidence": 1,
+            "punctuated_word": "your"
+          },
+          {
+            "end": 17.88,
+            "word": "time",
+            "start": 17.72,
+            "confidence": 0.99902344,
+            "punctuated_word": "time."
+          }
+        ]
+      },
+      "confidence": 0.99902344,
+      "confidenceSource": "derived",
+      "secondsFromStart": 16.52
+    },
+    {
+      "role": "bot",
+      "time": 1795144492133,
+      "source": "",
+      "endTime": 1795144493973,
+      "message": "Could I please have your full name for the booking?",
+      "duration": 1840,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 19.204
+    },
+    {
+      "role": "user",
+      "time": 1795144495093,
+      "endTime": 1795144496693,
+      "message": "Yes. It's Anna Ruiz.",
+      "duration": 1600,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 22.62,
+            "word": "yes",
+            "start": 22.14,
+            "confidence": 0.9995117,
+            "punctuated_word": "Yes."
+          },
+          {
+            "end": 22.94,
+            "word": "it's",
+            "start": 22.62,
+            "confidence": 1,
+            "punctuated_word": "It's"
+          },
+          {
+            "end": 23.26,
+            "word": "anna",
+            "start": 22.94,
+            "confidence": 0.72998047,
+            "punctuated_word": "Anna"
+          },
+          {
+            "end": 23.74,
+            "word": "ruiz",
+            "start": 23.26,
+            "confidence": 0.9869792,
+            "punctuated_word": "Ruiz."
+          }
+        ]
+      },
+      "confidence": 0.9995117,
+      "confidenceSource": "provider",
+      "secondsFromStart": 22.14
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144497411,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_DlSowGUbfmE4voWgmzJMrFmp",
+          "type": "function",
+          "function": {
+            "name": "book_appointment",
+            "arguments": "{\"name\": \"Anna Ruiz\", \"slot\": \"2026-11-20T10:00\"}"
+          }
+        }
+      ],
+      "secondsFromStart": 24.482
+    },
+    {
+      "role": "bot",
+      "time": 1795144498253,
+      "source": "",
+      "endTime": 1795144499133,
+      "message": "Just a sec.",
+      "duration": 880,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 25.324
+    },
+    {
+      "name": "book_appointment",
+      "role": "tool_call_result",
+      "time": 1795144498505,
+      "result": "{\"status\":\"booked\",\"bookingRef\":\"BK-AGQTFW\",\"slot\":\"2026-11-20T10:00\",\"name\":\"Anna Ruiz\",\"bookingStatus\":\"held\",\"depositCents\":5000,\"holdExpiresAt\":\"2026-11-20T03:29:57.745Z\"}",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_DlSowGUbfmE4voWgmzJMrFmp",
+      "secondsFromStart": 25.576
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144499127,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_A0mha23LI4EAG9vBDDRITZ3L",
+          "type": "function",
+          "function": {
+            "name": "send_deposit_link",
+            "arguments": "{\"bookingCode\": \"BK-AGQTFW\"}"
+          }
+        }
+      ],
+      "secondsFromStart": 26.198
+    },
+    {
+      "role": "bot",
+      "time": 1795144500183,
+      "source": "",
+      "endTime": 1795144500823,
+      "message": "Just a sec.",
+      "duration": 640,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 27.254
+    },
+    {
+      "name": "send_deposit_link",
+      "role": "tool_call_result",
+      "time": 1795144500258,
+      "result": "invalid arguments: bookingRef is required",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_A0mha23LI4EAG9vBDDRITZ3L",
+      "secondsFromStart": 27.329
+    },
+    {
+      "role": "user",
+      "time": 1795144501072.999,
+      "endTime": 1795144501632.998,
+      "message": "I'll wait.",
+      "duration": 559.9990234375,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 28.439999,
+            "word": "i'll",
+            "start": 28.119999,
+            "confidence": 0.99902344,
+            "punctuated_word": "I'll"
+          },
+          {
+            "end": 28.679998,
+            "word": "wait",
+            "start": 28.439999,
+            "confidence": 0.99365234,
+            "punctuated_word": "wait."
+          }
+        ]
+      },
+      "confidence": 0.99902344,
+      "confidenceSource": "provider",
+      "secondsFromStart": 28.1199990234375
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144502415,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_7TMg2O0LF3c4P5OossgNQyOk",
+          "type": "function",
+          "function": {
+            "name": "send_deposit_link",
+            "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+          }
+        }
+      ],
+      "secondsFromStart": 29.486
+    },
+    {
+      "role": "bot",
+      "time": 1795144503033,
+      "source": "",
+      "endTime": 1795144516313,
+      "message": "Your appointment for Anna Ruiz at 10 AM on November twentieth 2026 is held with booking code b k a g q t f w. I will now send you the deposit payment link. To confirm. This will just take a sec.",
+      "duration": 11919.9921875,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 30.104
+    },
+    {
+      "name": "send_deposit_link",
+      "role": "tool_call_result",
+      "time": 1795144515971,
+      "result": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_7TMg2O0LF3c4P5OossgNQyOk",
+      "secondsFromStart": 43.042
+    },
+    {
+      "role": "user",
+      "time": 1795144517853,
+      "endTime": 1795144523183,
+      "message": "Thank you. Could you please send me the deposit link? Also, do you accept Delta Dental insurance?",
+      "duration": 4399.9970703125,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 45.14,
+            "word": "thank",
+            "start": 44.9,
+            "confidence": 0.9970703,
+            "punctuated_word": "Thank"
+          },
+          {
+            "end": 45.38,
+            "word": "you",
+            "start": 45.14,
+            "confidence": 0.984375,
+            "punctuated_word": "you."
+          },
+          {
+            "end": 46.210003,
+            "word": "could",
+            "start": 45.890003,
+            "confidence": 1,
+            "punctuated_word": "Could"
+          },
+          {
+            "end": 46.29,
+            "word": "you",
+            "start": 46.210003,
+            "confidence": 1,
+            "punctuated_word": "you"
+          },
+          {
+            "end": 46.530003,
+            "word": "please",
+            "start": 46.29,
+            "confidence": 1,
+            "punctuated_word": "please"
+          },
+          {
+            "end": 46.690002,
+            "word": "send",
+            "start": 46.530003,
+            "confidence": 1,
+            "punctuated_word": "send"
+          },
+          {
+            "end": 46.850002,
+            "word": "me",
+            "start": 46.690002,
+            "confidence": 1,
+            "punctuated_word": "me"
+          },
+          {
+            "end": 46.93,
+            "word": "the",
+            "start": 46.850002,
+            "confidence": 1,
+            "punctuated_word": "the"
+          },
+          {
+            "end": 47.33,
+            "word": "deposit",
+            "start": 46.93,
+            "confidence": 1,
+            "punctuated_word": "deposit"
+          },
+          {
+            "end": 47.57,
+            "word": "link",
+            "start": 47.33,
+            "confidence": 0.9802246,
+            "punctuated_word": "link?"
+          },
+          {
+            "end": 48.55,
+            "word": "also",
+            "start": 47.99,
+            "confidence": 0.9995117,
+            "punctuated_word": "Also,"
+          },
+          {
+            "end": 48.79,
+            "word": "do",
+            "start": 48.55,
+            "confidence": 1,
+            "punctuated_word": "do"
+          },
+          {
+            "end": 48.87,
+            "word": "you",
+            "start": 48.79,
+            "confidence": 1,
+            "punctuated_word": "you"
+          },
+          {
+            "end": 49.19,
+            "word": "accept",
+            "start": 48.87,
+            "confidence": 1,
+            "punctuated_word": "accept"
+          },
+          {
+            "end": 49.51,
+            "word": "delta",
+            "start": 49.19,
+            "confidence": 0.9980469,
+            "punctuated_word": "Delta"
+          },
+          {
+            "end": 49.91,
+            "word": "dental",
+            "start": 49.51,
+            "confidence": 0.9902344,
+            "punctuated_word": "Dental"
+          },
+          {
+            "end": 50.23,
+            "word": "insurance",
+            "start": 49.91,
+            "confidence": 0.8913574,
+            "punctuated_word": "insurance?"
+          }
+        ]
+      },
+      "confidence": 0.9970703,
+      "confidenceSource": "derived",
+      "secondsFromStart": 44.9
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144524302,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_5kUHGtgIBYdeGJDcEYt8pSbq",
+          "type": "function",
+          "function": {
+            "name": "send_deposit_link",
+            "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+          }
+        },
+        {
+          "id": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA",
+          "type": "function",
+          "function": {
+            "name": "lookup_faq",
+            "arguments": "{\"topic\": \"insurance\"}"
+          }
+        }
+      ],
+      "secondsFromStart": 51.373
+    },
+    {
+      "name": "send_deposit_link",
+      "role": "tool_call_result",
+      "time": 1795144525282,
+      "result": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_5kUHGtgIBYdeGJDcEYt8pSbq",
+      "secondsFromStart": 52.353
+    },
+    {
+      "name": "lookup_faq",
+      "role": "tool_call_result",
+      "time": 1795144525282,
+      "result": "{\"topic\":\"insurance\",\"answer\":\"We accept Delta Dental, Cigna and Aetna PPO plans; bring your card to the visit.\"}",
+      "metadata": {},
+      "toolType": "function",
+      "toolCallId": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA",
+      "secondsFromStart": 52.353
+    },
+    {
+      "role": "bot",
+      "time": 1795144525283,
+      "source": "",
+      "endTime": 1795144527743,
+      "message": "Hold on a sec. The",
+      "duration": 1120.0029296875,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 52.354
+    },
+    {
+      "role": "user",
+      "time": 1795144527653,
+      "endTime": 1795144528683,
+      "message": "Sure. I'll wait.",
+      "duration": 800,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 55.02,
+            "word": "sure",
+            "start": 54.7,
+            "confidence": 0.9995117,
+            "punctuated_word": "Sure."
+          },
+          {
+            "end": 55.49,
+            "word": "i'll",
+            "start": 55.25,
+            "confidence": 0.9995117,
+            "punctuated_word": "I'll"
+          },
+          {
+            "end": 55.73,
+            "word": "wait",
+            "start": 55.49,
+            "confidence": 0.9995117,
+            "punctuated_word": "wait."
+          }
+        ]
+      },
+      "confidence": 0.9995117,
+      "confidenceSource": "derived",
+      "secondsFromStart": 54.7
+    },
+    {
+      "role": "bot",
+      "time": 1795144529833,
+      "source": "",
+      "endTime": 1795144533783,
+      "message": "we do accept Delta Dental insurance. Please bring your card, uh, to",
+      "duration": 3440,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 56.904
+    },
+    {
+      "role": "user",
+      "time": 1795144533332.997,
+      "endTime": 1795144533733,
+      "message": "Great.",
+      "duration": 320,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 60.78,
+            "word": "great",
+            "start": 60.46,
+            "confidence": 0.99853516,
+            "punctuated_word": "Great."
+          }
+        ]
+      },
+      "confidence": 0.99853516,
+      "confidenceSource": "provider",
+      "secondsFromStart": 60.3799970703125
+    },
+    {
+      "role": "bot",
+      "time": 1795144534703,
+      "source": "",
+      "endTime": 1795144536463,
+      "message": "Is there anything else I can help you with today?",
+      "duration": 1760,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 61.774
+    },
+    {
+      "role": "user",
+      "time": 1795144537603,
+      "endTime": 1795144538643,
+      "message": "No. That's everything.",
+      "duration": 960.00390625,
+      "metadata": {
+        "wordLevelConfidence": [
+          {
+            "end": 65.13,
+            "word": "no",
+            "start": 64.729996,
+            "confidence": 0.99853516,
+            "punctuated_word": "No."
+          },
+          {
+            "end": 65.369995,
+            "word": "that's",
+            "start": 65.13,
+            "confidence": 1,
+            "punctuated_word": "That's"
+          },
+          {
+            "end": 65.69,
+            "word": "everything",
+            "start": 65.369995,
+            "confidence": 0.99902344,
+            "punctuated_word": "everything."
+          }
+        ],
+        "llmConsumedTranscript": "No."
+      },
+      "confidence": 0.99902344,
+      "confidenceSource": "provider",
+      "secondsFromStart": 64.65
+    },
+    {
+      "role": "tool_calls",
+      "time": 1795144537806,
+      "message": "",
+      "toolCalls": [
+        {
+          "id": "call_T9MCryKWDscd0N41IKIMQ2yF",
+          "type": "function",
+          "function": {
+            "name": "endCall",
+            "arguments": "{}"
+          }
+        }
+      ],
+      "secondsFromStart": 64.877
+    },
+    {
+      "name": "endCall",
+      "role": "tool_call_result",
+      "time": 1795144538642,
+      "result": "Success.",
+      "toolType": "endCall",
+      "toolCallId": "call_T9MCryKWDscd0N41IKIMQ2yF",
+      "secondsFromStart": 65.713
+    },
+    {
+      "role": "bot",
+      "time": 1795144538723,
+      "source": "",
+      "endTime": 1795144539203,
+      "message": "Goodbye.",
+      "duration": 480,
+      "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+      "assistantName": "Bright Smile Dental receptionist",
+      "secondsFromStart": 65.794
+    }
+  ],
+  "stereoRecordingUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-3c969184-324b-4d30-8a4e-c6a104615e8e-stereo.wav",
+  "costBreakdown": {
+    "transport": 0,
+    "stt": 0.0111,
+    "llm": 0.0086,
+    "tts": 0.055,
+    "vapi": 0.0548,
+    "chat": 0,
+    "total": 0.1295,
+    "llmPromptTokens": 23771,
+    "llmCompletionTokens": 289,
+    "llmCachedPromptTokens": 4736,
+    "ttsCharacters": 1100,
+    "analysisCostBreakdown": {
+      "summary": 0,
+      "structuredData": 0,
+      "structuredOutput": 0,
+      "successEvaluation": 0,
+      "summaryPromptTokens": 0,
+      "summaryCompletionTokens": 0,
+      "summaryCachedPromptTokens": 0,
+      "structuredDataPromptTokens": 0,
+      "structuredOutputPromptTokens": 0,
+      "successEvaluationPromptTokens": 0,
+      "structuredDataCompletionTokens": 0,
+      "structuredDataCachedPromptTokens": 0,
+      "structuredOutputCompletionTokens": 0,
+      "successEvaluationCompletionTokens": 0,
+      "structuredOutputCachedPromptTokens": 0,
+      "successEvaluationCachedPromptTokens": 0
+    },
+    "knowledgeBaseCost": 0,
+    "voicemailDetectionCost": 0
+  },
+  "metadata": {
+    "role": "target",
+    "isSimulation": "true",
+    "simulationRunId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+    "simulationRunItemId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+    "simulationParentRunId": "4a518069-0cdf-4d1f-a3f9-b3e5ba94b5d2",
+    "simulationDefinitionId": "00ba5e64-c3aa-4bea-93ef-5dbda1560f53",
+    "simulationRunMaxDurationSeconds": "600",
+    "simulationDeferConversationStart": "true",
+    "simulationTargetStructuredOutputs": "false"
+  },
+  "assistantOverrides": {
+    "model": {
+      "model": "gpt-4.1-mini",
+      "messages": [
+        {
+          "role": "system",
+          "content": "You are the phone receptionist of Bright Smile Dental. Be brief and warm; one question at a time. Opening hours: Monday to Friday, 9 am to 5 pm, clinic time. Slots are 30 minutes. A suitable day to offer is 2026-11-23. To book: ask for the full name and the preferred time, call check_availability for the day, then book_appointment with slot as YYYY-MM-DDTHH:MM. A new booking is held for 15 minutes until a 50 dollar deposit is paid: offer send_deposit_link right after booking and read back the booking code, never the URL. If book_appointment answers slot_taken, offer the alternatives it returns. If it answers no_caller_id, offer to take a message. Answer questions about hours, insurance or parking with lookup_faq. Never invent prices, insurance plans or availability. End the call only after the caller says goodbye or confirms they need nothing else. A thank-you alone is not a goodbye: if the caller goes on with another question, answer it first."
+        }
+      ],
+      "provider": "openai"
+    },
+    "voice": {
+      "voiceId": "Elliot",
+      "provider": "vapi"
+    },
+    "firstMessage": "Thanks for calling Bright Smile Dental, this is the scheduling assistant. How can I help you today?",
+    "firstMessageMode": "assistant-speaks-first",
+    "silenceTimeoutSeconds": 600
+  },
+  "analysis": {},
+  "artifact": {
+    "recordingUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-a37d4464-20d4-44ca-bf49-22341d0143e0-mono.wav",
+    "stereoRecordingUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-3c969184-324b-4d30-8a4e-c6a104615e8e-stereo.wav",
+    "videoRecordingStartDelaySeconds": 0.432,
+    "recording": {
+      "stereoUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-3c969184-324b-4d30-8a4e-c6a104615e8e-stereo.wav",
+      "videoRecordingStartDelaySeconds": 0.432,
+      "mono": {
+        "combinedUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-a37d4464-20d4-44ca-bf49-22341d0143e0-mono.wav",
+        "assistantUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541371-a951145c-ca25-4c3c-be06-31f6d433f9b2-mono.wav",
+        "customerUrl": "https://94bdb67bb98da30b06bdd917725c037d.r2.cloudflarestorage.com/hipaa-recordings/01a1f6f2-d890-7332-b1ca-570ec2e670ae-1795144541372-828d9635-9a42-467b-a7ab-e49e23d77f53-mono.wav"
+      }
+    },
+    "messages": [
+      {
+        "role": "system",
+        "time": 1795144472789,
+        "message": "You are the phone receptionist of Bright Smile Dental. Be brief and warm; one question at a time. Opening hours: Monday to Friday, 9 am to 5 pm, clinic time. Slots are 30 minutes. A suitable day to offer is 2026-11-23. To book: ask for the full name and the preferred time, call check_availability for the day, then book_appointment with slot as YYYY-MM-DDTHH:MM. A new booking is held for 15 minutes until a 50 dollar deposit is paid: offer send_deposit_link right after booking and read back the booking code, never the URL. If book_appointment answers slot_taken, offer the alternatives it returns. If it answers no_caller_id, offer to take a message. Answer questions about hours, insurance or parking with lookup_faq. Never invent prices, insurance plans or availability. End the call only after the caller says goodbye or confirms they need nothing else. A thank-you alone is not a goodbye: if the caller goes on with another question, answer it first.",
+        "secondsFromStart": 0
+      },
+      {
+        "role": "bot",
+        "time": 1795144474233,
+        "source": "",
+        "endTime": 1795144479153,
+        "message": "Thanks for calling Bright Smile Dental. This is the scheduling assistant. Can I help you today?",
+        "duration": 3920.000244140625,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 1.304
+      },
+      {
+        "role": "user",
+        "time": 1795144480193,
+        "endTime": 1795144486043,
+        "message": "Hi. I'd like to book a teeth cleaning appointment on November 20 third, 20 26 at 10 AM, please.",
+        "duration": 5600,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 7.72,
+              "word": "hi",
+              "start": 7.24,
+              "confidence": 0.99902344,
+              "punctuated_word": "Hi."
+            },
+            {
+              "end": 7.96,
+              "word": "i'd",
+              "start": 7.72,
+              "confidence": 1,
+              "punctuated_word": "I'd"
+            },
+            {
+              "end": 8.04,
+              "word": "like",
+              "start": 7.96,
+              "confidence": 1,
+              "punctuated_word": "like"
+            },
+            {
+              "end": 8.12,
+              "word": "to",
+              "start": 8.04,
+              "confidence": 1,
+              "punctuated_word": "to"
+            },
+            {
+              "end": 8.36,
+              "word": "book",
+              "start": 8.12,
+              "confidence": 1,
+              "punctuated_word": "book"
+            },
+            {
+              "end": 8.44,
+              "word": "a",
+              "start": 8.36,
+              "confidence": 1,
+              "punctuated_word": "a"
+            },
+            {
+              "end": 8.68,
+              "word": "teeth",
+              "start": 8.44,
+              "confidence": 0.9951172,
+              "punctuated_word": "teeth"
+            },
+            {
+              "end": 9.08,
+              "word": "cleaning",
+              "start": 8.68,
+              "confidence": 1,
+              "punctuated_word": "cleaning"
+            },
+            {
+              "end": 9.48,
+              "word": "appointment",
+              "start": 9.08,
+              "confidence": 1,
+              "punctuated_word": "appointment"
+            },
+            {
+              "end": 9.719999,
+              "word": "on",
+              "start": 9.48,
+              "confidence": 1,
+              "punctuated_word": "on"
+            },
+            {
+              "end": 10.2,
+              "word": "november",
+              "start": 9.719999,
+              "confidence": 1,
+              "punctuated_word": "November"
+            },
+            {
+              "end": 10.52,
+              "word": "20",
+              "start": 10.2,
+              "confidence": 1,
+              "punctuated_word": "20"
+            },
+            {
+              "end": 10.76,
+              "word": "third",
+              "start": 10.52,
+              "confidence": 0.7416992,
+              "punctuated_word": "third,"
+            },
+            {
+              "end": 11.33,
+              "word": "20",
+              "start": 11.01,
+              "confidence": 0.9160156,
+              "punctuated_word": "20"
+            },
+            {
+              "end": 11.89,
+              "word": "26",
+              "start": 11.33,
+              "confidence": 0.9975586,
+              "punctuated_word": "26"
+            },
+            {
+              "end": 12.21,
+              "word": "at",
+              "start": 11.89,
+              "confidence": 0.99316406,
+              "punctuated_word": "at"
+            },
+            {
+              "end": 12.530001,
+              "word": "10",
+              "start": 12.21,
+              "confidence": 1,
+              "punctuated_word": "10"
+            },
+            {
+              "end": 12.93,
+              "word": "am",
+              "start": 12.530001,
+              "confidence": 0.99902344,
+              "punctuated_word": "AM,"
+            },
+            {
+              "end": 13.09,
+              "word": "please",
+              "start": 12.93,
+              "confidence": 1,
+              "punctuated_word": "please."
+            }
+          ]
+        },
+        "confidence": 0.99902344,
+        "confidenceSource": "derived",
+        "secondsFromStart": 7.24
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144486247,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_QHxSzcjfUjcKsbRvazsiaSZS",
+            "type": "function",
+            "function": {
+              "name": "check_availability",
+              "arguments": "{\"date\": \"2026-11-20\"}"
+            }
+          }
+        ],
+        "secondsFromStart": 13.318
+      },
+      {
+        "role": "bot",
+        "time": 1795144487253,
+        "source": "",
+        "endTime": 1795144487973,
+        "message": "Just a sec.",
+        "duration": 720,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 14.324
+      },
+      {
+        "name": "check_availability",
+        "role": "tool_call_result",
+        "time": 1795144487332,
+        "result": "{\"date\":\"2026-11-20\",\"free\":[\"2026-11-20T09:00\",\"2026-11-20T09:30\",\"2026-11-20T10:00\",\"2026-11-20T10:30\",\"2026-11-20T11:00\",\"2026-11-20T11:30\",\"2026-11-20T12:00\",\"2026-11-20T12:30\",\"2026-11-20T13:00\",\"2026-11-20T13:30\",\"2026-11-20T14:00\",\"2026-11-20T14:30\",\"2026-11-20T15:00\",\"2026-11-20T15:30\",\"2026-11-20T16:00\",\"2026-11-20T16:30\"]}",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_QHxSzcjfUjcKsbRvazsiaSZS",
+        "secondsFromStart": 14.403
+      },
+      {
+        "role": "bot",
+        "time": 1795144489273,
+        "source": "",
+        "endTime": 1795144489913,
+        "message": "The 10 AM",
+        "duration": 640,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 16.344
+      },
+      {
+        "role": "user",
+        "time": 1795144489473,
+        "endTime": 1795144490833,
+        "message": "Of course. Take your time.",
+        "duration": 1040,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 16.84,
+              "word": "of",
+              "start": 16.52,
+              "confidence": 0.99902344,
+              "punctuated_word": "Of"
+            },
+            {
+              "end": 17,
+              "word": "course",
+              "start": 16.84,
+              "confidence": 0.90893555,
+              "punctuated_word": "course."
+            },
+            {
+              "end": 17.56,
+              "word": "take",
+              "start": 17.32,
+              "confidence": 1,
+              "punctuated_word": "Take"
+            },
+            {
+              "end": 17.72,
+              "word": "your",
+              "start": 17.56,
+              "confidence": 1,
+              "punctuated_word": "your"
+            },
+            {
+              "end": 17.88,
+              "word": "time",
+              "start": 17.72,
+              "confidence": 0.99902344,
+              "punctuated_word": "time."
+            }
+          ]
+        },
+        "confidence": 0.99902344,
+        "confidenceSource": "derived",
+        "secondsFromStart": 16.52
+      },
+      {
+        "role": "bot",
+        "time": 1795144492133,
+        "source": "",
+        "endTime": 1795144493973,
+        "message": "Could I please have your full name for the booking?",
+        "duration": 1840,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 19.204
+      },
+      {
+        "role": "user",
+        "time": 1795144495093,
+        "endTime": 1795144496693,
+        "message": "Yes. It's Anna Ruiz.",
+        "duration": 1600,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 22.62,
+              "word": "yes",
+              "start": 22.14,
+              "confidence": 0.9995117,
+              "punctuated_word": "Yes."
+            },
+            {
+              "end": 22.94,
+              "word": "it's",
+              "start": 22.62,
+              "confidence": 1,
+              "punctuated_word": "It's"
+            },
+            {
+              "end": 23.26,
+              "word": "anna",
+              "start": 22.94,
+              "confidence": 0.72998047,
+              "punctuated_word": "Anna"
+            },
+            {
+              "end": 23.74,
+              "word": "ruiz",
+              "start": 23.26,
+              "confidence": 0.9869792,
+              "punctuated_word": "Ruiz."
+            }
+          ]
+        },
+        "confidence": 0.9995117,
+        "confidenceSource": "provider",
+        "secondsFromStart": 22.14
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144497411,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_DlSowGUbfmE4voWgmzJMrFmp",
+            "type": "function",
+            "function": {
+              "name": "book_appointment",
+              "arguments": "{\"name\": \"Anna Ruiz\", \"slot\": \"2026-11-20T10:00\"}"
+            }
+          }
+        ],
+        "secondsFromStart": 24.482
+      },
+      {
+        "role": "bot",
+        "time": 1795144498253,
+        "source": "",
+        "endTime": 1795144499133,
+        "message": "Just a sec.",
+        "duration": 880,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 25.324
+      },
+      {
+        "name": "book_appointment",
+        "role": "tool_call_result",
+        "time": 1795144498505,
+        "result": "{\"status\":\"booked\",\"bookingRef\":\"BK-AGQTFW\",\"slot\":\"2026-11-20T10:00\",\"name\":\"Anna Ruiz\",\"bookingStatus\":\"held\",\"depositCents\":5000,\"holdExpiresAt\":\"2026-11-20T03:29:57.745Z\"}",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_DlSowGUbfmE4voWgmzJMrFmp",
+        "secondsFromStart": 25.576
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144499127,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_A0mha23LI4EAG9vBDDRITZ3L",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingCode\": \"BK-AGQTFW\"}"
+            }
+          }
+        ],
+        "secondsFromStart": 26.198
+      },
+      {
+        "role": "bot",
+        "time": 1795144500183,
+        "source": "",
+        "endTime": 1795144500823,
+        "message": "Just a sec.",
+        "duration": 640,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 27.254
+      },
+      {
+        "name": "send_deposit_link",
+        "role": "tool_call_result",
+        "time": 1795144500258,
+        "result": "invalid arguments: bookingRef is required",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_A0mha23LI4EAG9vBDDRITZ3L",
+        "secondsFromStart": 27.329
+      },
+      {
+        "role": "user",
+        "time": 1795144501072.999,
+        "endTime": 1795144501632.998,
+        "message": "I'll wait.",
+        "duration": 559.9990234375,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 28.439999,
+              "word": "i'll",
+              "start": 28.119999,
+              "confidence": 0.99902344,
+              "punctuated_word": "I'll"
+            },
+            {
+              "end": 28.679998,
+              "word": "wait",
+              "start": 28.439999,
+              "confidence": 0.99365234,
+              "punctuated_word": "wait."
+            }
+          ]
+        },
+        "confidence": 0.99902344,
+        "confidenceSource": "provider",
+        "secondsFromStart": 28.1199990234375
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144502415,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_7TMg2O0LF3c4P5OossgNQyOk",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+            }
+          }
+        ],
+        "secondsFromStart": 29.486
+      },
+      {
+        "role": "bot",
+        "time": 1795144503033,
+        "source": "",
+        "endTime": 1795144516313,
+        "message": "Your appointment for Anna Ruiz at 10 AM on November twentieth 2026 is held with booking code b k a g q t f w. I will now send you the deposit payment link. To confirm. This will just take a sec.",
+        "duration": 11919.9921875,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 30.104
+      },
+      {
+        "name": "send_deposit_link",
+        "role": "tool_call_result",
+        "time": 1795144515971,
+        "result": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_7TMg2O0LF3c4P5OossgNQyOk",
+        "secondsFromStart": 43.042
+      },
+      {
+        "role": "user",
+        "time": 1795144517853,
+        "endTime": 1795144523183,
+        "message": "Thank you. Could you please send me the deposit link? Also, do you accept Delta Dental insurance?",
+        "duration": 4399.9970703125,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 45.14,
+              "word": "thank",
+              "start": 44.9,
+              "confidence": 0.9970703,
+              "punctuated_word": "Thank"
+            },
+            {
+              "end": 45.38,
+              "word": "you",
+              "start": 45.14,
+              "confidence": 0.984375,
+              "punctuated_word": "you."
+            },
+            {
+              "end": 46.210003,
+              "word": "could",
+              "start": 45.890003,
+              "confidence": 1,
+              "punctuated_word": "Could"
+            },
+            {
+              "end": 46.29,
+              "word": "you",
+              "start": 46.210003,
+              "confidence": 1,
+              "punctuated_word": "you"
+            },
+            {
+              "end": 46.530003,
+              "word": "please",
+              "start": 46.29,
+              "confidence": 1,
+              "punctuated_word": "please"
+            },
+            {
+              "end": 46.690002,
+              "word": "send",
+              "start": 46.530003,
+              "confidence": 1,
+              "punctuated_word": "send"
+            },
+            {
+              "end": 46.850002,
+              "word": "me",
+              "start": 46.690002,
+              "confidence": 1,
+              "punctuated_word": "me"
+            },
+            {
+              "end": 46.93,
+              "word": "the",
+              "start": 46.850002,
+              "confidence": 1,
+              "punctuated_word": "the"
+            },
+            {
+              "end": 47.33,
+              "word": "deposit",
+              "start": 46.93,
+              "confidence": 1,
+              "punctuated_word": "deposit"
+            },
+            {
+              "end": 47.57,
+              "word": "link",
+              "start": 47.33,
+              "confidence": 0.9802246,
+              "punctuated_word": "link?"
+            },
+            {
+              "end": 48.55,
+              "word": "also",
+              "start": 47.99,
+              "confidence": 0.9995117,
+              "punctuated_word": "Also,"
+            },
+            {
+              "end": 48.79,
+              "word": "do",
+              "start": 48.55,
+              "confidence": 1,
+              "punctuated_word": "do"
+            },
+            {
+              "end": 48.87,
+              "word": "you",
+              "start": 48.79,
+              "confidence": 1,
+              "punctuated_word": "you"
+            },
+            {
+              "end": 49.19,
+              "word": "accept",
+              "start": 48.87,
+              "confidence": 1,
+              "punctuated_word": "accept"
+            },
+            {
+              "end": 49.51,
+              "word": "delta",
+              "start": 49.19,
+              "confidence": 0.9980469,
+              "punctuated_word": "Delta"
+            },
+            {
+              "end": 49.91,
+              "word": "dental",
+              "start": 49.51,
+              "confidence": 0.9902344,
+              "punctuated_word": "Dental"
+            },
+            {
+              "end": 50.23,
+              "word": "insurance",
+              "start": 49.91,
+              "confidence": 0.8913574,
+              "punctuated_word": "insurance?"
+            }
+          ]
+        },
+        "confidence": 0.9970703,
+        "confidenceSource": "derived",
+        "secondsFromStart": 44.9
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144524302,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_5kUHGtgIBYdeGJDcEYt8pSbq",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+            }
+          },
+          {
+            "id": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA",
+            "type": "function",
+            "function": {
+              "name": "lookup_faq",
+              "arguments": "{\"topic\": \"insurance\"}"
+            }
+          }
+        ],
+        "secondsFromStart": 51.373
+      },
+      {
+        "name": "send_deposit_link",
+        "role": "tool_call_result",
+        "time": 1795144525282,
+        "result": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_5kUHGtgIBYdeGJDcEYt8pSbq",
+        "secondsFromStart": 52.353
+      },
+      {
+        "name": "lookup_faq",
+        "role": "tool_call_result",
+        "time": 1795144525282,
+        "result": "{\"topic\":\"insurance\",\"answer\":\"We accept Delta Dental, Cigna and Aetna PPO plans; bring your card to the visit.\"}",
+        "metadata": {},
+        "toolType": "function",
+        "toolCallId": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA",
+        "secondsFromStart": 52.353
+      },
+      {
+        "role": "bot",
+        "time": 1795144525283,
+        "source": "",
+        "endTime": 1795144527743,
+        "message": "Hold on a sec. The",
+        "duration": 1120.0029296875,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 52.354
+      },
+      {
+        "role": "user",
+        "time": 1795144527653,
+        "endTime": 1795144528683,
+        "message": "Sure. I'll wait.",
+        "duration": 800,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 55.02,
+              "word": "sure",
+              "start": 54.7,
+              "confidence": 0.9995117,
+              "punctuated_word": "Sure."
+            },
+            {
+              "end": 55.49,
+              "word": "i'll",
+              "start": 55.25,
+              "confidence": 0.9995117,
+              "punctuated_word": "I'll"
+            },
+            {
+              "end": 55.73,
+              "word": "wait",
+              "start": 55.49,
+              "confidence": 0.9995117,
+              "punctuated_word": "wait."
+            }
+          ]
+        },
+        "confidence": 0.9995117,
+        "confidenceSource": "derived",
+        "secondsFromStart": 54.7
+      },
+      {
+        "role": "bot",
+        "time": 1795144529833,
+        "source": "",
+        "endTime": 1795144533783,
+        "message": "we do accept Delta Dental insurance. Please bring your card, uh, to",
+        "duration": 3440,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 56.904
+      },
+      {
+        "role": "user",
+        "time": 1795144533332.997,
+        "endTime": 1795144533733,
+        "message": "Great.",
+        "duration": 320,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 60.78,
+              "word": "great",
+              "start": 60.46,
+              "confidence": 0.99853516,
+              "punctuated_word": "Great."
+            }
+          ]
+        },
+        "confidence": 0.99853516,
+        "confidenceSource": "provider",
+        "secondsFromStart": 60.3799970703125
+      },
+      {
+        "role": "bot",
+        "time": 1795144534703,
+        "source": "",
+        "endTime": 1795144536463,
+        "message": "Is there anything else I can help you with today?",
+        "duration": 1760,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 61.774
+      },
+      {
+        "role": "user",
+        "time": 1795144537603,
+        "endTime": 1795144538643,
+        "message": "No. That's everything.",
+        "duration": 960.00390625,
+        "metadata": {
+          "wordLevelConfidence": [
+            {
+              "end": 65.13,
+              "word": "no",
+              "start": 64.729996,
+              "confidence": 0.99853516,
+              "punctuated_word": "No."
+            },
+            {
+              "end": 65.369995,
+              "word": "that's",
+              "start": 65.13,
+              "confidence": 1,
+              "punctuated_word": "That's"
+            },
+            {
+              "end": 65.69,
+              "word": "everything",
+              "start": 65.369995,
+              "confidence": 0.99902344,
+              "punctuated_word": "everything."
+            }
+          ],
+          "llmConsumedTranscript": "No."
+        },
+        "confidence": 0.99902344,
+        "confidenceSource": "provider",
+        "secondsFromStart": 64.65
+      },
+      {
+        "role": "tool_calls",
+        "time": 1795144537806,
+        "message": "",
+        "toolCalls": [
+          {
+            "id": "call_T9MCryKWDscd0N41IKIMQ2yF",
+            "type": "function",
+            "function": {
+              "name": "endCall",
+              "arguments": "{}"
+            }
+          }
+        ],
+        "secondsFromStart": 64.877
+      },
+      {
+        "name": "endCall",
+        "role": "tool_call_result",
+        "time": 1795144538642,
+        "result": "Success.",
+        "toolType": "endCall",
+        "toolCallId": "call_T9MCryKWDscd0N41IKIMQ2yF",
+        "secondsFromStart": 65.713
+      },
+      {
+        "role": "bot",
+        "time": 1795144538723,
+        "source": "",
+        "endTime": 1795144539203,
+        "message": "Goodbye.",
+        "duration": 480,
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantName": "Bright Smile Dental receptionist",
+        "secondsFromStart": 65.794
+      }
+    ],
+    "messagesOpenAIFormatted": [
+      {
+        "content": "You are the phone receptionist of Bright Smile Dental. Be brief and warm; one question at a time. Opening hours: Monday to Friday, 9 am to 5 pm, clinic time. Slots are 30 minutes. A suitable day to offer is 2026-11-23. To book: ask for the full name and the preferred time, call check_availability for the day, then book_appointment with slot as YYYY-MM-DDTHH:MM. A new booking is held for 15 minutes until a 50 dollar deposit is paid: offer send_deposit_link right after booking and read back the booking code, never the URL. If book_appointment answers slot_taken, offer the alternatives it returns. If it answers no_caller_id, offer to take a message. Answer questions about hours, insurance or parking with lookup_faq. Never invent prices, insurance plans or availability. End the call only after the caller says goodbye or confirms they need nothing else. A thank-you alone is not a goodbye: if the caller goes on with another question, answer it first.",
+        "role": "system"
+      },
+      {
+        "content": "Thanks for calling Bright Smile Dental. This is the scheduling assistant. Can I help you today?",
+        "role": "assistant"
+      },
+      {
+        "content": "Hi. I'd like to book a teeth cleaning appointment on November 20 third, 20 26 at 10 AM, please.",
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_QHxSzcjfUjcKsbRvazsiaSZS",
+            "type": "function",
+            "function": {
+              "name": "check_availability",
+              "arguments": "{\"date\": \"2026-11-20\"}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "{\"date\":\"2026-11-20\",\"free\":[\"2026-11-20T09:00\",\"2026-11-20T09:30\",\"2026-11-20T10:00\",\"2026-11-20T10:30\",\"2026-11-20T11:00\",\"2026-11-20T11:30\",\"2026-11-20T12:00\",\"2026-11-20T12:30\",\"2026-11-20T13:00\",\"2026-11-20T13:30\",\"2026-11-20T14:00\",\"2026-11-20T14:30\",\"2026-11-20T15:00\",\"2026-11-20T15:30\",\"2026-11-20T16:00\",\"2026-11-20T16:30\"]}",
+        "role": "tool",
+        "tool_call_id": "call_QHxSzcjfUjcKsbRvazsiaSZS"
+      },
+      {
+        "content": "Just a sec. The 10 AM",
+        "role": "assistant"
+      },
+      {
+        "content": "Of course. Take your time.",
+        "role": "user"
+      },
+      {
+        "content": "Could I please have your full name for the booking?",
+        "role": "assistant"
+      },
+      {
+        "content": "Yes. It's Anna Ruiz.",
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_DlSowGUbfmE4voWgmzJMrFmp",
+            "type": "function",
+            "function": {
+              "name": "book_appointment",
+              "arguments": "{\"name\": \"Anna Ruiz\", \"slot\": \"2026-11-20T10:00\"}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "{\"status\":\"booked\",\"bookingRef\":\"BK-AGQTFW\",\"slot\":\"2026-11-20T10:00\",\"name\":\"Anna Ruiz\",\"bookingStatus\":\"held\",\"depositCents\":5000,\"holdExpiresAt\":\"2026-11-20T03:29:57.745Z\"}",
+        "role": "tool",
+        "tool_call_id": "call_DlSowGUbfmE4voWgmzJMrFmp"
+      },
+      {
+        "content": "Just a sec.",
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_A0mha23LI4EAG9vBDDRITZ3L",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingCode\": \"BK-AGQTFW\"}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "invalid arguments: bookingRef is required",
+        "role": "tool",
+        "tool_call_id": "call_A0mha23LI4EAG9vBDDRITZ3L"
+      },
+      {
+        "content": "Just a sec.",
+        "role": "assistant"
+      },
+      {
+        "content": "I'll wait.",
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_7TMg2O0LF3c4P5OossgNQyOk",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+        "role": "tool",
+        "tool_call_id": "call_7TMg2O0LF3c4P5OossgNQyOk"
+      },
+      {
+        "content": "Your appointment for Anna Ruiz at 10 AM on November twentieth 2026 is held with booking code b k a g q t f w. I will now send you the deposit payment link. To confirm. This will just take a sec.",
+        "role": "assistant"
+      },
+      {
+        "content": "Thank you. Could you please send me the deposit link? Also, do you accept Delta Dental insurance?",
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_5kUHGtgIBYdeGJDcEYt8pSbq",
+            "type": "function",
+            "function": {
+              "name": "send_deposit_link",
+              "arguments": "{\"bookingRef\": \"BK-AGQTFW\"}"
+            }
+          },
+          {
+            "id": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA",
+            "type": "function",
+            "function": {
+              "name": "lookup_faq",
+              "arguments": "{\"topic\": \"insurance\"}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "{\"status\":\"link_sent\",\"bookingRef\":\"BK-AGQTFW\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}",
+        "role": "tool",
+        "tool_call_id": "call_5kUHGtgIBYdeGJDcEYt8pSbq"
+      },
+      {
+        "content": "{\"topic\":\"insurance\",\"answer\":\"We accept Delta Dental, Cigna and Aetna PPO plans; bring your card to the visit.\"}",
+        "role": "tool",
+        "tool_call_id": "call_3ZcZ7nuSzwl0BsHXo7KWX4MA"
+      },
+      {
+        "content": "Hold on a sec. The",
+        "role": "assistant"
+      },
+      {
+        "content": "Sure. I'll wait.",
+        "role": "user"
+      },
+      {
+        "content": "we do accept Delta Dental insurance. Please bring your card, uh, to",
+        "role": "assistant"
+      },
+      {
+        "content": "Great.",
+        "role": "user"
+      },
+      {
+        "content": "Is there anything else I can help you with today?",
+        "role": "assistant"
+      },
+      {
+        "content": "No. That's everything.",
+        "role": "user"
+      },
+      {
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "id": "call_T9MCryKWDscd0N41IKIMQ2yF",
+            "type": "function",
+            "function": {
+              "name": "endCall",
+              "arguments": "{}"
+            }
+          }
+        ]
+      },
+      {
+        "content": "Success.",
+        "role": "tool",
+        "tool_call_id": "call_T9MCryKWDscd0N41IKIMQ2yF"
+      },
+      {
+        "content": "Goodbye.",
+        "role": "assistant"
+      }
+    ],
+    "transcript": "AI: Thanks for calling Bright Smile Dental. This is the scheduling assistant. Can I help you today?\nUser: Hi. I'd like to book a teeth cleaning appointment on November 20 third, 20 26 at 10 AM, please.\nAI: Just a sec.\nAI: The 10 AM\nUser: Of course. Take your time.\nAI: Could I please have your full name for the booking?\nUser: Yes. It's Anna Ruiz.\nAI: Just a sec.\nAI: Just a sec.\nUser: I'll wait.\nAI: Your appointment for Anna Ruiz at 10 AM on November twentieth 2026 is held with booking code b k a g q t f w. I will now send you the deposit payment link. To confirm. This will just take a sec.\nUser: Thank you. Could you please send me the deposit link? Also, do you accept Delta Dental insurance?\nAI: Hold on a sec. The\nUser: Sure. I'll wait.\nAI: we do accept Delta Dental insurance. Please bring your card, uh, to\nUser: Great.\nAI: Is there anything else I can help you with today?\nUser: No. That's everything.\nAI: Goodbye.\n",
+    "nodes": [],
+    "assistantActivations": [
+      {
+        "assistantName": "Bright Smile Dental receptionist",
+        "assistantId": "8d878490-ab7b-4d21-b5df-c103ace0a73e",
+        "assistantVersion": "v1"
+      }
+    ],
+    "variableValues": {
+      "day": "20",
+      "now": "Nov 20, 2026, 3:14 AM UTC",
+      "call": {
+        "id": "01a1f6f2-d890-7332-b1ca-570ec2e670ae",
+        "type": "vapi.websocketCall",
+        "status": "queued",
+        "metadata": {
+          "role": "target",
+          "isSimulation": "true",
+          "simulationRunId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+          "simulationRunItemId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+          "simulationParentRunId": "4a518069-0cdf-4d1f-a3f9-b3e5ba94b5d2",
+          "simulationDefinitionId": "00ba5e64-c3aa-4bea-93ef-5dbda1560f53",
+          "simulationRunMaxDurationSeconds": "600",
+          "simulationDeferConversationStart": "true",
+          "simulationTargetStructuredOutputs": "false"
+        },
+        "createdAt": "2026-11-20T03:14:32.720Z",
+        "transport": {
+          "provider": "vapi.websocket",
+          "audioFormat": {
+            "format": "pcm_s16le",
+            "container": "raw",
+            "sampleRate": 16000
+          },
+          "conversationType": "voice",
+          "websocketCallUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/transport"
+        }
+      },
+      "date": "Nov 20, 2026 UTC",
+      "time": "3:14 AM UTC",
+      "year": "2026",
+      "month": "November",
+      "transport": {
+        "provider": "vapi.websocket",
+        "audioFormat": {
+          "format": "pcm_s16le",
+          "container": "raw",
+          "sampleRate": 16000
+        },
+        "conversationType": "voice",
+        "websocketCallUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/transport"
+      },
+      "currentDateTime": "Friday, November 20, 2026 at 3:14 AM UTC"
+    },
+    "variables": {
+      "day": "20",
+      "now": "Nov 20, 2026, 3:14 AM UTC",
+      "call": {
+        "id": "01a1f6f2-d890-7332-b1ca-570ec2e670ae",
+        "type": "vapi.websocketCall",
+        "status": "queued",
+        "metadata": {
+          "role": "target",
+          "isSimulation": "true",
+          "simulationRunId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+          "simulationRunItemId": "1347915f-11b1-4554-b2c9-6460fc575b82",
+          "simulationParentRunId": "4a518069-0cdf-4d1f-a3f9-b3e5ba94b5d2",
+          "simulationDefinitionId": "00ba5e64-c3aa-4bea-93ef-5dbda1560f53",
+          "simulationRunMaxDurationSeconds": "600",
+          "simulationDeferConversationStart": "true",
+          "simulationTargetStructuredOutputs": "false"
+        },
+        "createdAt": "2026-11-20T03:14:32.720Z",
+        "transport": {
+          "provider": "vapi.websocket",
+          "audioFormat": {
+            "format": "pcm_s16le",
+            "container": "raw",
+            "sampleRate": 16000
+          },
+          "conversationType": "voice",
+          "websocketCallUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/transport"
+        }
+      },
+      "date": "Nov 20, 2026 UTC",
+      "time": "3:14 AM UTC",
+      "year": "2026",
+      "month": "November",
+      "transport": {
+        "provider": "vapi.websocket",
+        "audioFormat": {
+          "format": "pcm_s16le",
+          "container": "raw",
+          "sampleRate": 16000
+        },
+        "conversationType": "voice",
+        "websocketCallUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/transport"
+      },
+      "currentDateTime": "Friday, November 20, 2026 at 3:14 AM UTC"
+    },
+    "performanceMetrics": {
+      "turnLatencies": [
+        {
+          "modelLatency": 0,
+          "voiceLatency": 0,
+          "transcriberLatency": 509,
+          "endpointingLatency": 100,
+          "turnLatency": 1370,
+          "unmeasured": [
+            "model",
+            "voice"
+          ]
+        },
+        {
+          "modelLatency": 629,
+          "voiceLatency": 281,
+          "transcriberLatency": 177,
+          "endpointingLatency": 104,
+          "turnLatency": 1215
+        },
+        {
+          "modelLatency": 0,
+          "voiceLatency": 0,
+          "transcriberLatency": 181,
+          "endpointingLatency": 101,
+          "turnLatency": 1614,
+          "unmeasured": [
+            "model",
+            "voice"
+          ]
+        },
+        {
+          "modelLatency": 634,
+          "voiceLatency": 462,
+          "transcriberLatency": 83,
+          "endpointingLatency": 102,
+          "turnLatency": 1305
+        },
+        {
+          "modelLatency": 0,
+          "voiceLatency": 0,
+          "transcriberLatency": 42,
+          "endpointingLatency": 101,
+          "turnLatency": 1808,
+          "unmeasured": [
+            "model",
+            "voice"
+          ]
+        },
+        {
+          "modelLatency": 442,
+          "voiceLatency": 494,
+          "transcriberLatency": 0,
+          "endpointingLatency": 177,
+          "turnLatency": 1152
+        },
+        {
+          "modelLatency": 616,
+          "voiceLatency": 330,
+          "transcriberLatency": 18,
+          "endpointingLatency": 105,
+          "turnLatency": 1117,
+          "unmeasured": [
+            "transcriber"
+          ]
+        },
+        {
+          "modelLatency": 0,
+          "voiceLatency": 0,
+          "transcriberLatency": 0,
+          "endpointingLatency": 101,
+          "turnLatency": 765,
+          "unmeasured": [
+            "transcriber",
+            "model",
+            "voice"
+          ]
+        }
+      ],
+      "modelLatencyAverage": 290.13,
+      "voiceLatencyAverage": 195.88,
+      "transcriberLatencyAverage": 126.25,
+      "endpointingLatencyAverage": 111.38,
+      "turnLatencyAverage": 1293.25,
+      "fromTransportLatencyAverage": 20,
+      "toTransportLatencyAverage": 20,
+      "numAssistantInterrupted": 4,
+      "turnLatencyUnmeasuredTracked": true
+    },
+    "scorecards": {},
+    "transfers": []
+  },
+  "costs": [
+    {
+      "cost": 0.011139006666666666,
+      "type": "transcriber",
+      "minutes": 1.1370333333333333,
+      "transcriber": {
+        "model": "nova-3",
+        "provider": "deepgram"
+      }
+    },
+    {
+      "cost": 0.00855,
+      "type": "model",
+      "model": {
+        "model": "gpt-4.1-mini",
+        "provider": "openai"
+      },
+      "promptTokens": 23771,
+      "reasoningTokens": 0,
+      "completionTokens": 289,
+      "cachedPromptTokens": 4736
+    },
+    {
+      "cost": 0.055,
+      "type": "voice",
+      "voice": {
+        "model": "vapi-v1",
+        "voiceId": "Elliot",
+        "provider": "vapi"
+      },
+      "characters": 1100
+    },
+    {
+      "cost": 0.054765,
+      "type": "vapi",
+      "minutes": 1.0953,
+      "subType": "normal"
+    },
+    {
+      "cost": 0,
+      "type": "knowledge-base",
+      "model": {
+        "model": "gemini-3.1-flash-lite",
+        "provider": "google"
+      },
+      "promptTokens": 0,
+      "completionTokens": 0
+    }
+  ],
+  "monitor": {
+    "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/listen",
+    "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/control"
+  },
+  "transport": {
+    "provider": "vapi.websocket",
+    "audioFormat": {
+      "format": "pcm_s16le",
+      "container": "raw",
+      "sampleRate": 16000
+    },
+    "conversationType": "voice",
+    "websocketCallUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production-simulation1.vapi.ai/01a1f6f2-d890-7332-b1ca-570ec2e670ae/transport"
+  },
+  "assistantVersion": "v1"
+}

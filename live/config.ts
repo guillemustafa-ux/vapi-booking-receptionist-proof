@@ -29,7 +29,7 @@ const TOOLS = [
 export function assistantBody(serverUrl: string, credentialId: string, day: string): Record<string, unknown> {
   const server = { url: serverUrl, credentialId, timeoutSeconds: 20 };
   return {
-    name: 'Bright Smile Dental receptionist (vapi-booking-receptionist-proof)',
+    name: 'Bright Smile Dental receptionist', // Vapi caps names at 40 characters
     firstMessage: 'Thanks for calling Bright Smile Dental, this is the scheduling assistant. How can I help you today?',
     model: {
       provider: 'openai',
@@ -41,10 +41,13 @@ export function assistantBody(serverUrl: string, credentialId: string, day: stri
             'You are the phone receptionist of Bright Smile Dental. Be brief and warm; one question at a time.',
             `Opening hours: Monday to Friday, 9 am to 5 pm, clinic time. Slots are 30 minutes. A suitable day to offer is ${day}.`,
             'To book: ask for the full name and the preferred time, call check_availability for the day, then book_appointment with slot as YYYY-MM-DDTHH:MM.',
+            // Run 2 (2026-11-20): "twenty-third" was transcribed "20 third" and the assistant booked the 20th.
+            'Speech-to-text can split ordinals: "20 third" means the 23rd. Before book_appointment, read back the weekday, date and time in words (for example "Monday, November 23rd at 10 am") and wait for the caller to say yes; if they correct you, use the correction.',
             'A new booking is held for 15 minutes until a 50 dollar deposit is paid: offer send_deposit_link right after booking and read back the booking code, never the URL.',
             'If book_appointment answers slot_taken, offer the alternatives it returns. If it answers no_caller_id, offer to take a message.',
             'Answer questions about hours, insurance or parking with lookup_faq. Never invent prices, insurance plans or availability.',
-            'When the caller is done, say goodbye and end the call.',
+            // Run 1 (2026-11-20) hung up on "Thank you" while the caller was still speaking.
+            'End the call only after the caller says goodbye or confirms they need nothing else. A thank-you alone is not a goodbye: if the caller goes on with another question, answer it first.',
           ].join(' '),
         },
       ],
@@ -65,7 +68,7 @@ export function assistantBody(serverUrl: string, credentialId: string, day: stri
 
 export function scenarioBody(day: string): Record<string, unknown> {
   return {
-    name: 'Book a cleaning, get the deposit link, ask about insurance',
+    name: 'Book, deposit link, insurance question',
     instructions: [
       `You are Ana Ruiz calling Bright Smile Dental to book a teeth cleaning on ${day} at 10 am.`,
       'Give your name when asked. Accept the booking, ask for the deposit link, then ask whether they accept Delta Dental.',

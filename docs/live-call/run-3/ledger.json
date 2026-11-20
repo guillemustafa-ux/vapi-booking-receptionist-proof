@@ -1,0 +1,77 @@
+{
+  "tool_calls": [
+    {
+      "tool_call_id": "check-f3141fa5-4f4f-43b2-94eb-ecd4eb0928b0",
+      "name": "lookup_faq",
+      "args_json": "{\"topic\":\"hours\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"topic\":\"hours\",\"answer\":\"We are open Monday to Friday, 9 am to 5 pm.\"}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_VGug8XF6WeXVRnbOnbnaGB49",
+      "name": "check_availability",
+      "args_json": "{\"date\":\"2026-11-23\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"date\":\"2026-11-23\",\"free\":[\"2026-11-23T09:00\",\"2026-11-23T09:30\",\"2026-11-23T10:00\",\"2026-11-23T10:30\",\"2026-11-23T11:00\",\"2026-11-23T11:30\",\"2026-11-23T12:00\",\"2026-11-23T12:30\",\"2026-11-23T13:00\",\"2026-11-23T13:30\",\"2026-11-23T14:00\",\"2026-11-23T14:30\",\"2026-11-23T15:00\",\"2026-11-23T15:30\",\"2026-11-23T16:00\",\"2026-11-23T16:30\"]}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_Kzj3QJoLs41JNMyT3hkZ54zW",
+      "name": "book_appointment",
+      "args_json": "{\"name\":\"Anna Ruiz\",\"slot\":\"2026-11-23T10:00\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"status\":\"booked\",\"bookingRef\":\"BK-ETDWQE\",\"slot\":\"2026-11-23T10:00\",\"name\":\"Anna Ruiz\",\"bookingStatus\":\"held\",\"depositCents\":5000,\"holdExpiresAt\":\"2026-11-20T03:34:27.069Z\"}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_TRq0mdZBUhkbZMNt08NPUfzo",
+      "name": "send_deposit_link",
+      "args_json": "{\"bookingCode\":\"BK-ETDWQE\"}",
+      "status": "done",
+      "outcome_json": "{\"error\":\"invalid arguments: bookingRef is required\"}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_1j94eTpSJceupjKv0wDyG9j4",
+      "name": "lookup_faq",
+      "args_json": "{\"topic\":\"insurance\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"topic\":\"insurance\",\"answer\":\"We accept Delta Dental, Cigna and Aetna PPO plans; bring your card to the visit.\"}}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_AN4w1ZL6XiZWkhjOZKQsoMjE",
+      "name": "send_deposit_link",
+      "args_json": "{\"bookingCode\":\"BK-ETDWQE\"}",
+      "status": "done",
+      "outcome_json": "{\"error\":\"invalid arguments: bookingRef is required\"}",
+      "deliveries": 1
+    },
+    {
+      "tool_call_id": "call_mxQhUkdYjgtDo2XJblxh1IVr",
+      "name": "send_deposit_link",
+      "args_json": "{\"bookingRef\":\"BK-ETDWQE\"}",
+      "status": "done",
+      "outcome_json": "{\"result\":{\"status\":\"link_sent\",\"bookingRef\":\"BK-ETDWQE\",\"url\":\"https://checkout.stripe.com/c/pay/cs_test_0001\"}}",
+      "deliveries": 1
+    }
+  ],
+  "bookings": [
+    {
+      "ref": "BK-ETDWQE",
+      "slot": "2026-11-23T10:00",
+      "name": "Anna Ruiz",
+      "status": "held",
+      "phone": "+15555550142",
+      "callback_phone": "+15555550142"
+    }
+  ],
+  "deposits": [
+    {
+      "booking_ref": "BK-ETDWQE",
+      "status": "open",
+      "session_id": "cs_test_0001"
+    }
+  ]
+}
